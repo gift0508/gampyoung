@@ -130,8 +130,10 @@ header{
 
 .pool-badge{
   font-size:11px;color:var(--muted);margin-bottom:14px;
-  display:flex;justify-content:space-between;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 8px;align-items:center;
 }
+.pool-badge > div{flex-wrap:wrap;}
+.pool-badge span{white-space:nowrap;}
 .field{margin-bottom:10px;}
 .field-label{
   font-size:11.5px;font-weight:700;color:#5a5648;
@@ -414,8 +416,32 @@ body.ultra-full .layout{grid-template-columns:minmax(0,1fr);}
 /* ── 왼쪽 패널: 매칭채점표 · 재작성처방 ── */
 .field-box.lf-rich{white-space:normal;}
 .field-box[data-field="answer"]{max-height:340px;overflow-y:auto;}
-.field-box[data-field="advice"]{max-height:460px;overflow-y:auto;}
-.field-box[data-field="grid"],.field-box[data-field="rewrite"]{max-height:520px;overflow-y:auto;}
+.field-box[data-field="review"]{max-height:640px;overflow-y:auto;}
+.field-box[data-field="grid"],.field-box[data-field="rewrite"]{max-height:560px;overflow-y:auto;}
+/* 6단 재작성처방 */
+.sx-diag{font-size:11.5px;line-height:1.6;margin:6px 0;padding:6px 8px;background:#f7f5ef;border-radius:6px;}
+.sx-row{padding:2px 0;} .sx-row b{color:var(--navy);margin-right:4px;} .sx-none{color:var(--muted);}
+.sx-h{font-size:12px;font-weight:800;color:var(--red);margin:8px 0 3px;}
+.sx-type{font-weight:700;color:#7a5a12;font-size:11px;margin-left:4px;}
+.sx-why{font-size:11.5px;line-height:1.6;background:#fbf6e8;border:1px solid #efe2bd;border-radius:6px;padding:6px 8px;margin-bottom:6px;}
+.sx-why b{color:#7a5a12;margin-right:4px;}
+.sx-list{list-style:none;margin:0;padding:0;font-size:11.5px;line-height:1.55;}
+.sx-list li{padding:5px 0;border-bottom:1px solid var(--line);}
+.sx-n{display:inline-block;min-width:16px;font-weight:800;color:var(--navy);}
+.sx-tag{font-size:10px;font-weight:800;border-radius:4px;padding:0 5px;margin-right:4px;color:#fff;}
+.sx-ins{background:var(--green);} .sx-fix{background:var(--blue);} .sx-del{background:#8a8578;}
+.sx-keep{font-size:11.5px;margin-top:6px;color:#1f6a3f;} .sx-cmp{font-size:11px;margin-top:6px;color:var(--muted);}
+/* 첨삭답안 */
+.rv-legend{font-size:10.5px;color:var(--muted);margin-bottom:6px;line-height:1.5;}
+.rv-lg{border-radius:3px;padding:0 4px;}
+.rv-piece{margin:4px 0;} .rv-cap{font-size:10px;font-weight:700;color:var(--gold);margin:6px 0 1px;}
+.rv-text{font-size:12px;line-height:1.65;color:var(--ink);white-space:normal;}
+.rv-strike{color:#9a958a;text-decoration:line-through;background:#f1efe9;}
+.rv-blk{margin:5px 0 7px;padding:6px 8px;border-radius:6px;font-size:11.5px;line-height:1.55;border-left:3px solid;}
+.rv-ins{background:#e9f5ec;border-color:var(--green);} .rv-fix{background:#eaf0fb;border-color:var(--blue);} .rv-del{background:#f1efe9;border-color:#8a8578;}
+.rv-head{font-weight:800;font-size:11px;margin-bottom:2px;} .rv-ins .rv-head{color:#1f6a3f;} .rv-fix .rv-head{color:var(--blue);} .rv-del .rv-head{color:#6f6a5d;}
+.rv-n{font-weight:800;background:#fff;border:1px solid currentColor;border-radius:4px;padding:0 5px;margin-left:4px;font-size:10px;}
+.rv-note{color:#5a5648;margin-bottom:3px;} .rv-model{color:var(--ink);} .rv-src{font-size:10px;color:var(--muted);margin-top:2px;}
 .lg-table{width:100%;border-collapse:collapse;font-size:11.5px;}
 .lg-table td{padding:4px 3px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45;}
 .lg-table tfoot td{font-weight:800;color:var(--navy);border-bottom:none;padding-top:6px;}
@@ -660,7 +686,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <header>
   <div class="brand">
     <div class="brand-line">
-      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r12">1행2필</span>
+      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r15">1행2필</span>
       <span class="domain-badge" id="domainBadge">감평사 보상법규</span>
       <span class="brand-desc">사례형 답안 학습엔진</span>
       <span class="step-admin-gear" id="domainEditBtn" title="학습영역 설정">⚙</span>
@@ -692,6 +718,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
       <div style="display:flex;align-items:center;gap:8px;">
         <span id="currentStageBadge" style="color:#bfae8a;font-weight:800;">POOL</span>
         <span id="attemptBadge" style="font-size:11px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:2px 7px;">첫 도전</span>
+        <span id="scoreBadge" title="예상점수 (최근 채점)" style="font-size:12px;font-weight:800;color:var(--navy);background:#fcf8ee;border:1px solid #efe2bd;border-radius:5px;padding:2px 8px;">—점</span>
       </div>
     </div>
 
@@ -725,26 +752,18 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
       <div class="field-label">매칭채점표 <span class="lock-icon" data-lock="grid">🔒</span><span class="step-admin-gear" data-leftfield="grid" title="내용 수정">⚙</span></div>
       <div class="field-box blurred lf-rich" data-field="grid" id="leftGridBox"></div>
     </div>
-    <div class="field">
-      <div class="field-label">매칭율 <span class="lock-icon" data-lock="rate">🔒</span></div>
-      <div class="field-box blurred" data-field="rate">—%</div>
-    </div>
-
-    <div class="score-row">
-      <div class="field">
-        <div class="field-label">예상점수 <span class="lock-icon" data-lock="score">🔒</span></div>
-        <div class="field-box blurred" data-field="score" style="text-align:center;">
-          <span class="score-display" id="scoreDisplay" style="font-size:22px;">--<span class="unit">점</span></span>
-        </div>
-      </div>
-    </div>
-    <div class="field">
-      <div class="field-label">답안개선방안 <span class="lock-icon" data-lock="advice">🔒</span><span class="step-admin-gear" data-leftfield="advice" title="내용 수정">⚙</span></div>
-      <div class="field-box blurred lf-rich" data-field="advice" id="leftAdviceBox"></div>
+    <!-- r13: 매칭율·예상점수 칸은 상단 배지로 통합. 아래 두 요소는 화면에 보이지 않고 내부 계산·내보내기용으로만 유지 -->
+    <div style="display:none;">
+      <div class="field-box" data-field="rate">—%</div>
+      <div class="field-box" data-field="score"><span class="score-display" id="scoreDisplay">--<span class="unit">점</span></span></div>
     </div>
     <div class="field">
       <div class="field-label">재작성처방 <span class="lock-icon" data-lock="rewrite">🔒</span><span class="step-admin-gear" data-leftfield="rewrite" title="교수자 처방 수정">⚙</span></div>
       <div class="field-box blurred lf-rich" data-field="rewrite" id="leftRewriteBox"></div>
+    </div>
+    <div class="field">
+      <div class="field-label">첨삭답안 <span class="lock-icon" data-lock="review">🔒</span><span class="step-admin-gear" data-leftfield="advice" title="교수자 보충 수정">⚙</span></div>
+      <div class="field-box blurred lf-rich" data-field="review" id="leftReviewBox"></div>
     </div>
 
     <button class="btn-primary" id="revealBtn" disabled title="답안을 채점해 점수를 반영한 뒤에 다시 볼 수 있습니다">👁 채점 결과 다시 보기</button>
@@ -908,7 +927,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <!-- ADMIN CONSOLE -->
 <div class="admin-console" id="adminConsole">
   <div class="admin-head">
-    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r12</span></div>
+    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r15</span></div>
     <button class="hbtn danger" id="adminClose">모드 종료 ✕</button>
   </div>
   <div class="admin-tabs">
@@ -952,7 +971,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
           핵심키워드: (선택) / 또는 , 로 구분 — 매칭채점표가 없을 때 채점 기준으로 쓰입니다<br>
           매칭채점표: (선택·권장) 한 줄에 한 목차씩 <code>목차 | 목차명 | 구분 | 논증키워드 | 배점</code>, 바로 아래 줄에 <code>핵심필수현출문구: …</code>, 필요하면 그 아래 <code>금지표현: … · …</code><br>
           ※ 금지표현은 답안에서 <b>그 표현이 나온 목차만 0점</b>이 되고 다른 목차는 그대로 채점됩니다.<br>
-          ※ 답안개선방안·재작성처방은 「완료 및 채점하기」 때 매칭채점표로 <b>자동 생성</b>됩니다. 따로 덧붙일 말이 있을 때만 <code>답안개선방안:</code> <code>재작성처방:</code>을 적으면 「교수자 보충」으로 함께 표시됩니다.<br><br>
+          ※ 재작성처방(6단)과 첨삭답안은 「완료 및 채점하기」 때 매칭채점표와 모범답안으로 <b>자동 생성</b>됩니다. 따로 덧붙일 말이 있을 때만 <code>재작성처방:</code> <code>답안개선방안:</code>을 적으면 「교수자 처방」「교수자 보충」으로 함께 표시됩니다.<br><br>
           <b>※ 단원·주제·사례지문·정답 4개 항목이 있어야 등록됩니다.</b> 누락 시 건너뛰고 사유를 안내합니다. 매칭채점표와 핵심키워드가 모두 없으면 채점할 기준이 없으므로 등록은 하되 경고를 표시합니다. 각 항목명은 줄 맨 앞에 적으세요.<br>
           ※ 같은 파일을 다시 올리면 수정이 아니라 <b>중복 등록</b>됩니다. 내용 수정은 아래 「등록된 문제 목록」의 수정 버튼을 쓰세요.
         </div>
@@ -1625,6 +1644,39 @@ function renderUltraAnswerSheet(){
     inp.addEventListener('keydown',e=>{
       if(e.isComposing || e.keyCode===229) return;   // 한글 조합 중의 Enter·Backspace는 IME에 맡긴다
       const line=+inp.dataset.ultraLine, pg=+inp.dataset.ultraPage;
+      // r15: 화살표로 줄 사이 이동 — ↑↓는 같은 칸 위치로, ←→는 줄 끝·앞에서 넘어감
+      if(e.key==='ArrowUp' || e.key==='ArrowDown'){
+        const before=inp.selectionStart, i=ultraIdx(pg,line);
+        const col=ultraChars(inp.value.slice(0,before));
+        const wrapped = inp.scrollHeight > inp.clientHeight*1.5 || inp.offsetHeight > 40;   // 좁은 화면에서 한 줄이 접혀 있는 경우
+        if(!wrapped) e.preventDefault();
+        setTimeout(()=>{
+          if(document.activeElement!==inp) return;
+          if(wrapped && inp.selectionStart!==before) return;   // 접힌 줄 안에서 움직였으면 그대로
+          const j=e.key==='ArrowUp'?i-1:i+1;
+          if(j<0 || j>=ULTRA_TOTAL) return;
+          const q=ultraPos(j);
+          if(q.p!==ultraPage){ ultraPage=q.p; renderUltraAnswerSheet(); }
+          const el=document.querySelector('.ultra-line-input[data-ultra-page="'+q.p+'"][data-ultra-line="'+q.l+'"]');
+          if(!el) return;
+          el.focus();
+          const off=Array.from(el.value).slice(0,col).join('').length;
+          try{ el.setSelectionRange(off,off); }catch(x){}
+        },0);
+        return;
+      }
+      if(e.key==='ArrowLeft' && inp.selectionStart===0 && inp.selectionEnd===0){
+        const i=ultraIdx(pg,line); if(i<=0) return;
+        e.preventDefault(); const q=ultraPos(i-1); ultraFocus(q.p,q.l); return;
+      }
+      if(e.key==='ArrowRight' && inp.selectionStart===inp.value.length && inp.selectionEnd===inp.value.length){
+        const i=ultraIdx(pg,line); if(i+1>=ULTRA_TOTAL) return;
+        e.preventDefault(); const q=ultraPos(i+1);
+        if(q.p!==ultraPage){ ultraPage=q.p; renderUltraAnswerSheet(); }
+        const el=document.querySelector('.ultra-line-input[data-ultra-page="'+q.p+'"][data-ultra-line="'+q.l+'"]');
+        if(el){ el.focus(); try{ el.setSelectionRange(0,0); }catch(x){} }
+        return;
+      }
       if(e.key==='Enter' && !e.shiftKey){
         e.preventDefault();
         clearTimeout(ultraTimer);
@@ -2160,7 +2212,7 @@ const leftFieldLabels={
   logic:'핵심논리',
   keyword:'핵심키워드',
   grid:'매칭채점표',
-  advice:'답안개선방안(교수자 보충)',
+  advice:'교수자 보충(첨삭답안 아래 표시)',
   rewrite:'재작성처방(교수자 처방)'
 };
 // currentProblemNumber: which registered problem is currently loaded in the workspace.
@@ -3270,7 +3322,7 @@ document.getElementById('kwSubmitBtn').addEventListener('click',()=>{
 
   kwRewrite=[];
   items.forEach(el=>{ if(!el.classList.contains('checked')) kwRewrite.push(el.querySelector('span:last-child').textContent); });
-  renderRewrite(); renderAdvice();
+  renderRewrite(); renderReview();
 });
 
 /* 점수 반영 → 스테이지 이동. 반영했으면 true, 막혔으면(이미 반영·스테이지 가득) false */
@@ -3476,9 +3528,13 @@ function _answerSections(rows){
       const legacy = (cfg.length===3) && step.tabs.some(function(t){return String(t).trim().startsWith('#');}) && !step.tabs.some(function(t){return _romanOf(String(t).trim().slice(1));});
       let k=0, hr='';
       step.tabs.forEach(function(t,ti){
-        if(String(t).trim().startsWith('#')){ k++; hr=_romanOf(String(t).trim().slice(1)) || (legacy ? (_ROM[k]||'') : step.roman); return; }
+        const ts=String(t).trim();
+        if(ts.startsWith('#')){ k++; const mh=ts.slice(1).match(/^(\d+)/); if(mh) k=+mh[1]; hr=_romanOf(ts.slice(1)) || (legacy ? (_ROM[k]||'') : step.roman); return; }
         const tv=v[ti]; if(!tv) return;
-        secs.push({roman: k ? hr : (legacy ? def : step.roman), text:tv+'\n'});
+        const roman = k ? hr : (legacy ? def : step.roman);
+        let mok=roman; const mP=ts.match(/^[(（](\d+)[)）]/), mN=ts.match(/^(\d+)\s*[.．]/);
+        if(mP) mok=roman+(k?'-'+k:'')+'('+mP[1]+')'; else if(mN) mok=roman+'-'+mN[1];
+        secs.push({roman:roman, mok:mok, label:ts.replace(/^#/,''), text:tv+'\n'});
       });
       return;
     }
@@ -3540,30 +3596,42 @@ function _suggest(row, ans){
    목차를 알 수 없는 곳에서 나오면 앞뒤 문장과 논증키워드가 가장 많이 겹치는 목차로 추정해 0점을 넣되, 학습자가 고칠 수 있게 둔다.
    그래도 못 찾으면 경고만 띄운다. */
 function _detectForbidden(list, ans, rows){
+  // r14: 학습자 답안을 소제목 단위(Ⅱ-2(2))까지 나눠, 금지표현이 나온 바로 그 목차만 잡는다
+  const pieces=learnerPieces(rows);
+  const rowKeys=rows.map(function(r){return _mokKey(r.mok);});
+  function targetsFor(pieceKey){
+    let t=rows.filter(function(r,i){return rowKeys[i]===pieceKey;});
+    if(!t.length) t=rows.filter(function(r,i){return rowKeys[i].indexOf(pieceKey)===0;});          // 하위 줄들
+    let k=pieceKey;
+    while(!t.length && k){                                                                          // 상위로 올라가며
+      const m=k.match(/^(.*)(\(\d+\)|-\d+)$/); if(!m) break; k=m[1];
+      t=rows.filter(function(r,i){return rowKeys[i]===k;});
+      if(!t.length) t=rows.filter(function(r,i){return rowKeys[i].indexOf(k)===0;});
+    }
+    return t;
+  }
   const res=[];
   (list||[]).forEach(function(expr){
     const n=_norm(expr); if(!n) return;
-    const hit={expr:expr, romans:[], guessed:[], unresolved:false, found:false};
-    ans.secs.forEach(function(s){
-      if(_norm(s.text).indexOf(n)<0) return;
+    const hit={expr:expr, romans:[], guessed:[], rowsHit:[], unresolved:false, found:false};
+    pieces.forEach(function(p){
+      if(_norm(p.text).indexOf(n)<0) return;
       hit.found=true;
-      if(s.roman){ if(hit.romans.indexOf(s.roman)<0) hit.romans.push(s.roman); return; }
-      // 금지표현이 들어 있는 문단(빈 줄로 나뉜 덩어리)과 그 줄을 기준으로, 논증키워드가 가장 많이 겹치는 목차를 고른다
-      const paras=s.text.split(/\n[ \t]*\n/);
-      const para=paras.find(function(p){return _norm(p).indexOf(n)>=0;}) || s.text;
+      if(p.mok){
+        const t=targetsFor(_mokKey(p.mok));
+        if(t.length){ t.forEach(function(r){ if(hit.rowsHit.indexOf(r)<0) hit.rowsHit.push(r); }); const ro=_romanOf(p.mok); if(ro && hit.romans.indexOf(ro)<0) hit.romans.push(ro); return; }
+      }
+      // 목차를 알 수 없는 곳: 논증키워드가 가장 많이 겹치는 줄로 추정
+      const paras=p.text.split(/\n[ \t]*\n/);
+      const para=paras.find(function(x){return _norm(x).indexOf(n)>=0;}) || p.text;
       const line=para.split('\n').find(function(l){return _norm(l).indexOf(n)>=0;}) || para;
       const pN=_norm(para), lN=_norm(line);
-      let best='', bestScore=0;
-      const byRoman={};
+      let best=null, bestScore=0;
       rows.forEach(function(r){
-        const ro=_romanOf(r.mok); if(!ro) return;
-        _tokens(r.kw||r.name).forEach(function(t){
-          const tn=_norm(t); if(tn===n) return;
-          byRoman[ro]=(byRoman[ro]||0)+(lN.indexOf(tn)>=0?2:0)+(pN.indexOf(tn)>=0?1:0);
-        });
+        let sc=0; _tokens(r.kw||r.name).forEach(function(t){ const tn=_norm(t); if(tn===n) return; sc+=(lN.indexOf(tn)>=0?2:0)+(pN.indexOf(tn)>=0?1:0); });
+        if(sc>bestScore){ bestScore=sc; best=r; }
       });
-      Object.keys(byRoman).forEach(function(ro){ if(byRoman[ro]>bestScore){ bestScore=byRoman[ro]; best=ro; } });
-      if(best){ if(hit.romans.indexOf(best)<0 && hit.guessed.indexOf(best)<0) hit.guessed.push(best); }
+      if(best){ if(hit.rowsHit.indexOf(best)<0) hit.rowsHit.push(best); if(hit.guessed.indexOf(best.mok)<0) hit.guessed.push(best.mok); }
       else hit.unresolved=true;
     });
     if(hit.found) res.push(hit);
@@ -3598,10 +3666,9 @@ function openGridCheck(sig, already){
   gridState.forbidHits=fh;
   fh.forEach(function(h){
     g.rows.forEach(function(r,i){
-      const ro=_romanOf(r.mok); if(!ro) return;
+      if(h.rowsHit.indexOf(r)<0) return;
       const sel=gridState.sel[i];
-      const strict=h.romans.indexOf(ro)>=0, guess=h.guessed.indexOf(ro)>=0;
-      if(!strict && !guess) return;
+      const guess=h.guessed.indexOf(r.mok)>=0, strict=!guess;
       if(sel.forbid.indexOf(h.expr)<0) sel.forbid.push(h.expr);
       if(strict){ sel.forced=true; sel.guessed=false; }
       else if(!sel.forced) sel.guessed=true;
@@ -3631,7 +3698,7 @@ function openGridCheck(sig, already){
     const fchips=g.forbid.map(function(k){
       const h=fh.find(function(x){return x.expr===k;});
       if(!h) return '<span class="gm ok">✓ '+_esc(k)+' 미사용</span>';
-      const where=h.romans.concat(h.guessed.map(function(r){return r+'(추정)';}));
+      const where=h.rowsHit.map(function(r){return r.mok+(h.guessed.indexOf(r.mok)>=0?'(추정)':'');});
       if(where.length) return '<span class="gm no">⛔ '+_esc(k)+' — '+where.join('·')+' 0점</span>'+(h.unresolved?'<span class="gm warn">⚠ '+_esc(k)+' 위치 미확인 1곳</span>':'');
       return '<span class="gm warn">⚠ '+_esc(k)+' — 위치 미확인 (해당 목차를 직접 ✕ ×0.00으로 고르세요)</span>';
     }).join('');
@@ -3710,7 +3777,7 @@ function resetGridCheck(){
   const sec=document.getElementById('gridCheckSection'); if(sec) sec.style.display='none';
   ['gridRows','gridMust','gridResult','gridNote'].forEach(function(id){ const el=document.getElementById(id); if(el) el.innerHTML=''; });
   updateRateLabel();
-  renderLeftGrid(); renderRewrite(); if(typeof renderAdvice==='function') renderAdvice();
+  renderLeftGrid(); renderRewrite(); renderReview();
 }
 function updateRateLabel(){
   const lab=document.querySelector('[data-field="rate"]');
@@ -3721,6 +3788,14 @@ function updateRateLabel(){
   label.firstChild.nodeValue = '매칭율 ';
 }
 window.addEventListener('DOMContentLoaded', function(){ setTimeout(updateRateLabel,0); });
+/* r13: 숨은 점수 표시가 바뀔 때마다 상단 배지에 반영 */
+(function(){
+  const src=document.getElementById('scoreDisplay'), badge=document.getElementById('scoreBadge');
+  if(!src || !badge) return;
+  function sync(){ const t=src.textContent.replace('점','').trim(); badge.textContent=(t && t!=='--') ? t+'점' : '—점'; badge.style.color=(t && t!=='--') ? (parseInt(t,10)>=PASS_SCORE?'var(--green)':'var(--red)') : 'var(--navy)'; }
+  new MutationObserver(sync).observe(src,{childList:true,subtree:true,characterData:true});
+  sync();
+})();
 
 
 /* ================= 왼쪽 패널: 매칭채점표 · 재작성처방 ================= */
@@ -3750,182 +3825,294 @@ function renderLeftGrid(){
     (g.must?'<div class="lg-must"><b>핵심필수현출문구</b> '+_esc(g.must)+'</div>':'')+
     (g.forbid.length?'<div class="lg-must"><b>금지표현</b> '+_esc(g.forbid.join(' · '))+' <span style="color:var(--muted);">(나온 목차만 0점)</span></div>':'');
 }
-/* ================= 재작성처방 (매칭채점표 기반 자동 생성) =================
-   ★ 절대누락 → 판례문구 단위 → 사안포섭문구 단위 → 목차 단위 → 문제 전체 단위 순으로
-   실제로 다시 써야 할 문구와 목차를 짚는다. */
-function _rxUnit(tag){
-  if(tag==='판례') return 'case';
-  if(tag==='사안포섭') return 'fact';
-  return 'mok';
+/* ================= 6단 재작성처방 · 첨삭답안 (r14, 규칙 기반) =================
+   매칭채점표의 목차 표기(Ⅲ-2(1))가 모범답안의 Ⅲ. → 2. → (1) 위치와 같다는 약속 위에서,
+   ★ 절대누락 → ① 대전제 누락 → ② 대전제 오적용(금지표현) → ③ 판례문구 → ④ 사안포섭 → ⑤ 사안해결 → ⑥ 재작성 처방을 만들고,
+   ✕ 목차는 모범답안의 해당 부분을 「신설」로, △ 목차는 「교정 참고」로, 금지표현 문장은 「삭제」로 학습자 답안에 끼워 넣는다.
+   답안을 읽고 이해해야 하는 판단(어느 문장이 왜 틀렸는지)은 하지 않는다. */
+const _SIX_PREMISE=['쟁점설정','정의정식','관련법령','학설'];
+const _SIX_CASE=['판례'];
+const _SIX_FACT=['사안포섭'];
+const _SIX_CONCL=['소결','결론'];
+function _mokKey(m){ return _norm(String(m||'')).replace(/[()（）]/g,function(c){return c==='（'?'(':(c==='）'?')':c);}); }
+/* 모범답안을 목차 조각으로: [{mok, title, text}] — 로마숫자 절 · n. 소제목 · (n) 소소제목 */
+function _splitByHeadings(text, roman){
+  const out=[]; let sub=0, cur={roman:roman, mok:roman, title:'', text:''};
+  String(text||'').split('\n').forEach(function(raw){
+    const ln=raw.trim();
+    const mS=ln.match(/^(\d{1,2})\s*[.．]\s*(.*)$/);
+    const mP=ln.match(/^[(（](\d{1,2})[)）]\s*(.*)$/);
+    if(mS && !/^\d{4}\s*[.．]/.test(ln)){ if(cur.text.trim()||cur.title) out.push(cur); sub=+mS[1]; cur={roman:roman, mok:roman+'-'+sub, title:mS[2].trim(), text:''}; return; }
+    if(mP){ if(cur.text.trim()||cur.title) out.push(cur); cur={roman:roman, mok:(sub?roman+'-'+sub:roman)+'('+mP[1]+')', title:mP[2].trim(), text:''}; return; }
+    cur.text+=raw+'\n';
+  });
+  if(cur.text.trim()||cur.title) out.push(cur);
+  return out;
 }
-const _RX_UNIT_ORDER=['forbid','star','case','fact','mok','all'];
-const _RX_UNIT_HEAD={forbid:'⛔ 금지표현',star:'★ 절대누락',case:'판례문구 단위',fact:'사안포섭문구 단위',mok:'목차 단위',all:'문제 전체 단위'};
-function buildRewriteItems(){
+function parseModelAnswer(answer){
+  const KNOWN='문제의 소재|학설|판례|검토|사안의 경우|사안의 적용|소결|법률규정|관련법령|결론';
+  // 줄바꿈이 빠져 "…여부1. 학설…"처럼 붙은 소제목을 떼어 낸다
+  const fixed=String(answer||'').replace(new RegExp('((?:여부|인지|되는지|가능한지|해당하는지))\\s*(1\\s*[.．]\\s*(?:'+KNOWN+'))','g'),'$1\n$2');
+  const pieces=[];
+  _splitByRoman(fixed,'').forEach(function(s){
+    const lines=s.text.split('\n'); const first=lines[0].trim();
+    const mR=first.match(/^([ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ])\s*[.．]\s*(.*)$/);
+    const title=mR?mR[2].trim():''; const body=lines.slice(1).join('\n');
+    const subs=_splitByHeadings(body, s.roman);
+    if(subs.length && subs[0].mok===s.roman){ subs[0].title=title; }
+    else subs.unshift({roman:s.roman, mok:s.roman, title:title, text:''});
+    subs.forEach(function(p){ pieces.push(p); });
+  });
+  return pieces;
+}
+/* 채점표 목차 표기에 해당하는 모범답안 문구 (하위 조각 포함) */
+function modelPartFor(mok, pieces){
+  const k=_mokKey(mok);
+  const roman=_romanOf(mok);
+  let hit=pieces.filter(function(p){ return _mokKey(p.mok)===k; });
+  if(!hit.length) return null;
+  // 상위 목차(Ⅲ 또는 Ⅲ-2)를 가리키면 그 아래 조각까지 묶는다
+  const children=pieces.filter(function(p){ const pk=_mokKey(p.mok); return pk!==k && pk.indexOf(k)===0; });
+  const all=hit.concat(children.filter(function(p){ return hit.indexOf(p)<0; }));
+  const text=all.map(function(p){
+    const head=p.title ? ((p.mok.indexOf('(')>=0 ? '('+p.mok.slice(p.mok.indexOf('(')+1) : (p.mok.indexOf('-')>=0 ? p.mok.slice(p.mok.indexOf('-')+1)+'.' : p.mok+'.'))+' '+p.title) : '';
+    return (head?head+'\n':'')+p.text.trim();
+  }).filter(Boolean).join('\n');
+  return text.trim()||null;
+}
+/* 학습자 답안 조각 (모드별) — {roman, mok, text, label} 순서대로 */
+function learnerPieces(rows){
+  const secs=_answerSections(rows);
   const out=[];
-  if(gridState){
-    const rows=gridState.rows, sel=gridState.sel;
-    (gridState.forbidHits||[]).forEach(function(h){
-      const where=h.romans.concat(h.guessed);
-      const lost=rows.reduce(function(sum,r,i){ return sum+((sel[i].forbid||[]).indexOf(h.expr)>=0 ? r.pts : 0); },0);
-      out.push({unit:'forbid', head:_RX_UNIT_HEAD.forbid,
-        text:'「'+h.expr+'」를 '+(where.length?where.join('·')+' 목차에서 ':'답안에서 ')+'지우고, 그 자리를 해당 목차의 법리 문구로 다시 쓰세요. 이 표현 하나로 '+(where.length?'그 목차 배점 '+fmtPts(lost)+'점이 모두 빠졌습니다.':'점수가 깎일 수 있습니다.'),
-        loss:lost});
-    });
-    if(gridState.missing && gridState.missing.length){
-      out.push({unit:'star', head:_RX_UNIT_HEAD.star, text:'다음 핵심필수현출문구를 답안에 그대로 현출하세요: '+gridState.missing.join(' · '), loss:0});
-    }
-    const items=[];
-    rows.forEach(function(r,i){
-      const s=sel[i];
-      if(s.band==='o' || (s.forbid && s.forbid.length)) return;   // 금지표현 목차는 ⛔ 항목에서 따로 처방
-      const u=_rxUnit(r.tag);
-      let text;
-      if(u==='case'){
-        text='판례 문구를 원문대로 다시 쓰기 — '+(r.kw||r.name);
-        if(s.missing && s.missing.length) text+='\n· 빠진 판례 문구: '+s.missing.join(', ');
-      } else if(u==='fact'){
-        text='사안의 사실을 대전제 문구에 하나씩 대응시켜 다시 쓰기 — '+(r.kw||r.name);
-        if(s.missing && s.missing.length) text+='\n· 빠진 포섭 문구: '+s.missing.join(', ');
-      } else {
-        text=(s.band==='x' ? '목차 신설 — 이 목차를 세우고 다음 내용으로 채우기: ' : '목차 보강 — 문구와 배열을 다음에 맞추기: ')+(r.kw||r.name);
-        if(s.missing && s.missing.length) text+='\n· 빠진 문구: '+s.missing.join(', ');
-      }
-      if(s.elsewhere && s.elsewhere.length) text+='\n· 다른 목차에 쓴 문구(이 목차로 옮길 것): '+s.elsewhere.join(', ');
-      items.push({unit:u, head:_RX_UNIT_HEAD[u], mok:r.mok, name:r.name, tag:r.tag, band:s.band, text:text, loss:r.pts*(1-s.coef)});
-    });
-    items.sort(function(a,b){ return _RX_UNIT_ORDER.indexOf(a.unit)-_RX_UNIT_ORDER.indexOf(b.unit) || b.loss-a.loss; });
-    out.push.apply(out, items);
-    // 문제 전체 단위: 목차 골격과 재작성 순서
-    const skeleton=rows.map(function(r,i){ return {mok:r.mok,name:r.name,tag:r.tag,pts:r.pts,band:sel[i].band}; });
-    const order=rows.map(function(r,i){return {mok:r.mok,loss:r.pts*(1-sel[i].coef)};})
-      .filter(function(x){return x.loss>0.001 && sel[rows.findIndex(function(r){return r.mok===x.mok;})].band!=='o';})
-      .sort(function(a,b){return b.loss-a.loss;});
-    const allBandO = rows.every(function(r,i){return sel[i].band==='o';});
-    let text = allBandO
-      ? '현재 목차 순서와 문구를 유지한 채, 문구의 정확성만 다듬어 다시 한 번 전체를 써 보세요.'
-      : '아래 목차 순서대로 답안 전체를 처음부터 다시 쓰세요. ✕ 목차는 새로 세우고, △ 목차는 문구를 맞추세요.';
-    if(order.length) text+='\n· 고칠 순서(잃은 점수 큰 목차부터): '+order.map(function(x){return x.mok+'(−'+fmtPts(x.loss)+')';}).join(' → ');
-    text+='\n· 목차 골격: '+skeleton.map(function(k){return k.mok+' '+k.name+' '+BAND_INFO[k.band].mark;}).join(' / ');
-    out.push({unit:'all', head:_RX_UNIT_HEAD.all, text:text, skeleton:skeleton, order:order, allO:allBandO, loss:0});
-    return out;
-  }
-  if(kwRewrite){
-    if(kwRewrite.length) out.push({unit:'star', head:_RX_UNIT_HEAD.star, text:'다음 핵심키워드를 답안에 현출하세요: '+kwRewrite.join(' · '), loss:0});
-    return out;
-  }
-  return null;
+  secs.forEach(function(s){
+    if(s.mok){ out.push({roman:s.roman, mok:s.mok, text:s.text, label:s.label||''}); return; }
+    // 상급자·초상급자: 학습자가 쓴 소제목으로 더 잘게 나눈다
+    const lines=s.text.split('\n'); const first=lines[0].trim();
+    const isRomanLine=/^[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]\s*[.．]/.test(first);
+    const body=isRomanLine?lines.slice(1).join('\n'):s.text;
+    const subs=_splitByHeadings(body, s.roman||'');
+    if(isRomanLine){ if(subs.length && subs[0].mok===(s.roman||'')) subs[0].text=first+'\n'+subs[0].text; else subs.unshift({roman:s.roman,mok:s.roman||'',title:'',text:first+'\n'}); }
+    subs.forEach(function(p){ const t=(p.title?((p.mok.indexOf('(')>=0?'('+p.mok.slice(p.mok.indexOf('(')+1):(p.mok.indexOf('-')>=0?p.mok.slice(p.mok.indexOf('-')+1)+'.':''))+' '+p.title+'\n'):'')+p.text; out.push({roman:p.roman, mok:p.mok, text:t, label:''}); });
+  });
+  return out;
 }
+function _rowLabel(r){ return r.mok+' '+r.name+(r.tag?'〔'+r.tag+'〕':''); }
+/* ⑥ 처방 항목과 ①~⑤ 진단을 한 번에 만든다 */
+function buildSixStep(){
+  if(!gridState) return null;
+  const rows=gridState.rows, sel=gridState.sel;
+  const rec=getCurrentProblem();
+  const model=parseModelAnswer(rec.answer);
+  const items=[]; let n=0;
+  const forbidRows=rows.map(function(r,i){return {r:r,i:i,s:sel[i]};}).filter(function(x){return x.s.forbid&&x.s.forbid.length;});
+  forbidRows.forEach(function(x){
+    n++; items.push({n:n, type:'del', head:'삭제', i:x.i, row:x.r, loss:x.r.pts,
+      text:'「'+x.s.forbid.join('」「')+'」가 든 문장을 지우고, 그 자리를 아래 문구로 다시 쓰세요.', model:modelPartFor(x.r.mok, model)});
+  });
+  rows.map(function(r,i){return {r:r,i:i,s:sel[i]};}).filter(function(x){return x.s.band==='x' && !(x.s.forbid&&x.s.forbid.length);})
+    .sort(function(a,b){return b.r.pts-a.r.pts;}).forEach(function(x){
+      n++; items.push({n:n, type:'ins', head:'신설', i:x.i, row:x.r, loss:x.r.pts*(1-x.s.coef),
+        text:'이 목차를 세우고 다음 문구를 현출하세요: '+(x.r.kw||x.r.name), model:modelPartFor(x.r.mok, model)});
+    });
+  rows.map(function(r,i){return {r:r,i:i,s:sel[i]};}).filter(function(x){return x.s.band==='t' && !(x.s.forbid&&x.s.forbid.length);})
+    .sort(function(a,b){return (b.r.pts*(1-b.s.coef))-(a.r.pts*(1-a.s.coef));}).forEach(function(x){
+      n++;
+      let t='';
+      if(x.s.missing&&x.s.missing.length) t+='빠진 문구: '+x.s.missing.join(' / ');
+      if(x.s.elsewhere&&x.s.elsewhere.length) t+=(t?'\n':'')+'다른 목차에 쓴 문구(이 목차로 옮길 것): '+x.s.elsewhere.join(' / ');
+      if(!t) t='문구와 배열을 다음에 맞추세요: '+(x.r.kw||x.r.name);
+      items.push({n:n, type:'fix', head:'교정', i:x.i, row:x.r, loss:x.r.pts*(1-x.s.coef), text:t, model:modelPartFor(x.r.mok, model)});
+    });
+  const keep=rows.filter(function(r,i){return sel[i].band==='o' && !(sel[i].forbid&&sel[i].forbid.length);}).map(_rowLabel);
+  // ①~⑤
+  function pick(tags, bands){ return rows.map(function(r,i){return {r:r,s:sel[i]};}).filter(function(x){return tags.indexOf(x.r.tag)>=0 && bands.indexOf(x.s.band)>=0;}); }
+  function desc(x){ let t=_rowLabel(x.r); if(x.s.missing&&x.s.missing.length) t+=' — 빠진 문구: '+x.s.missing.slice(0,3).join(' / '); return t; }
+  const d1=pick(_SIX_PREMISE,['x']).map(function(x){return _rowLabel(x.r)+' 부재';});
+  const d2=forbidRows.map(function(x){return _rowLabel(x.r)+' — 금지표현 「'+x.s.forbid.join('」「')+'」';});
+  const d3=pick(_SIX_CASE,['x','t']).map(desc);
+  const d4=pick(_SIX_FACT,['x','t']).map(desc);
+  const concl=pick(_SIX_CONCL,['o','t','x']);
+  const d5=concl.length ? concl.map(function(x){return _rowLabel(x.r)+' '+({o:'정답',t:'불완전',x:'부재'})[x.s.band];}) : [];
+  const caseAllOk = pick(_SIX_CASE,['o','t','x']).length && !d3.length;
+  const factAllOk = pick(_SIX_FACT,['o','t','x']).length && !d4.length;
+  // 처방 유형
+  const types=[];
+  if(forbidRows.length) types.push('논증 교정(금지표현)');
+  if(items.some(function(it){return it.type==='ins';})) types.push('목차 신설');
+  if(d3.length) types.push('판례 문구 보강');
+  if(d4.length) types.push('포섭 보강');
+  if(!types.length) types.push(gridState.pct>=85?'문구 정밀화':'문구 보강');
+  // 왜 이 처방인가
+  const why=[];
+  why.push(fmtPts(gridState.total)+'점 중 '+fmtPts(gridState.earned)+'점('+gridState.pct+'%)입니다.');
+  if(keep.length) why.push(keep.length>=3 ? keep.slice(0,3).map(function(k){return k.split(' ')[0];}).join('·')+' 등 '+keep.length+'개 목차는 정확합니다.' : keep.map(function(k){return k.split(' ')[0];}).join('·')+' 목차는 정확합니다.');
+  if(forbidRows.length) why.push('금지표현이 쓰인 목차는 논증이 맞아도 점수가 없으니, 그 문장부터 바꾸세요.');
+  const insLoss=items.filter(function(it){return it.type==='ins';}).reduce(function(a,it){return a+it.loss;},0);
+  const fixLoss=items.filter(function(it){return it.type==='fix';}).reduce(function(a,it){return a+it.loss;},0);
+  if(insLoss>0) why.push('빠진 목차(신설)로 '+fmtPts(insLoss)+'점, 불완전한 목차(교정)로 '+fmtPts(fixLoss)+'점을 잃었습니다.');
+  else if(fixLoss>0) why.push('목차는 다 세웠고, 문구 정확성에서 '+fmtPts(fixLoss)+'점을 잃었습니다.');
+  if(gridState.pct<PASS_SCORE) why.push('아래 처방을 번호 순서대로 고치면 '+PASS_SCORE+'점 기준에 가까워집니다.');
+  else if(gridState.pct<85) why.push('교정 항목만 다듬으면 85% 이상도 가능합니다.');
+  const cnt={del:0,ins:0,fix:0}; items.forEach(function(it){cnt[it.type]++;});
+  return {items:items, keep:keep, types:types, why:why, cnt:cnt,
+    star:gridState.missing||[], d1:d1, d2:d2, d3:d3, d4:d4, d5:d5, caseAllOk:caseAllOk, factAllOk:factAllOk, model:model};
+}
+function _sixLine(label, arr, none){ return '<div class="sx-row"><b>'+label+'</b> '+(arr.length?arr.map(_esc).join(' · '):'<span class="sx-none">'+none+'</span>')+'</div>'; }
 function renderRewrite(){
   const box=document.getElementById('leftRewriteBox'); if(!box) return;
   let rec={}; try{ rec=getCurrentProblem(); }catch(e){}
-  const items=buildRewriteItems();
   let html='';
-  if(gridState && !gridState.submitted) html+='<div class="lg-draft">자동 추천 밴드 기준 · 밴드를 바꾸면 처방도 바로 바뀝니다</div>';
-  if(items===null){
-    html+='<div class="lg-empty">「완료 및 채점하기」를 누르면 매칭채점표에 따라 판례문구 단위 → 사안포섭문구 단위 → 목차 단위 → 문제 전체 단위로 재작성 처방이 표시됩니다.</div>';
-  } else if(!items.length){
-    html+='<div class="rx-ok">모든 항목을 충족했습니다.</div>';
-  } else {
-    _RX_UNIT_ORDER.forEach(function(u){
-      const its=items.filter(function(it){return it.unit===u;});
-      if(!its.length) return;
-      html+='<div class="rx-unit rx-'+u+'"><div class="rx-cat">'+_RX_UNIT_HEAD[u]+'</div>';
-      if(u==='all'){
-        const it=its[0];
-        html+='<div class="rx-all-lead">'+_esc(it.text.split('\n')[0])+'</div>';
-        if(it.order.length) html+='<div class="rx-order"><b>고칠 순서</b> '+it.order.map(function(x){return _esc(x.mok)+'<span class="rx-loss">(−'+fmtPts(x.loss)+')</span>';}).join(' → ')+'</div>';
-        html+='<ol class="rx-skel">'+it.skeleton.map(function(k){
-          return '<li><span class="lg-b '+k.band+'">'+BAND_INFO[k.band].mark+'</span><b>'+_esc(k.mok)+'</b> '+_esc(k.name)+(k.tag?' <span class="lg-tag">'+_esc(k.tag)+'</span>':'')+' <span class="lg-pts-s">'+fmtPts(k.pts)+'점</span></li>';
-        }).join('')+'</ol>';
-      } else {
-        html+='<ol class="rx-list">'+its.map(function(it){
-          return '<li>'+(it.mok?'<b>'+_esc(it.mok)+' '+_esc(it.name)+'</b> <span class="lg-b '+it.band+'">'+BAND_INFO[it.band].mark+'</span>'+(it.loss?' <span class="rx-loss">−'+fmtPts(it.loss)+'점</span>':'')+'<br>':'')+_esc(it.text).replace(/\n/g,'<br>')+'</li>';
-        }).join('')+'</ol>';
-      }
-      html+='</div>';
-    });
-  }
-  if(rec.rewrite) html+='<div class="rx-prof" style="margin-top:8px;"><div class="rx-h">교수자 보충</div>'+_esc(rec.rewrite).replace(/\n/g,'<br>')+'</div>';
-  box.innerHTML=html;
-}
-
-window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ renderLeftGrid(); renderRewrite(); },0); });
-
-
-/* ================= 답안개선방안 (매칭채점표 기반 자동 생성 · 총평) =================
-   구분별(대전제·판례·사안포섭·검토·소결) 충족도를 보고 답안 전체의 방향을 짚는 추상적 총평.
-   구체적인 고칠 문구는 재작성처방이 맡는다. */
-const _ADV_GROUP={'쟁점설정':'대전제','정의정식':'대전제','학설':'대전제','관련법령':'대전제','판례':'판례','사안포섭':'사안포섭','검토':'검토','소결':'소결'};
-const _ADV_LABEL={'대전제':'대전제(법리) 세우기','판례':'판례 문구','사안포섭':'사안포섭','검토':'검토','소결':'결론(소결)'};
-const _ADV_WEAK={
-  '대전제':'쟁점마다 대전제(법리)를 먼저 세운 뒤 사안으로 넘어가는 순서를 몸에 익히세요.',
-  '판례':'판례는 요지만 옮기지 말고, 판례 문구 그대로 현출하는 연습이 필요합니다.',
-  '사안포섭':'사안의 사실관계를 대전제의 요건에 하나씩 대응시키는 포섭이 엷습니다. 사실을 옮겨 적는 데서 그치지 말고 요건과 짝지어 쓰세요.',
-  '검토':'학설·판례를 나열한 뒤 어느 쪽이 타당한지, 그 이유를 분명히 밝히는 검토가 필요합니다.',
-  '소결':'각 물음의 결론을 설문이 묻는 형태 그대로 맺으세요.'
-};
-function buildAdvice(){
-  if(!gridState) return null;
-  const rows=gridState.rows, sel=gridState.sel;
-  const cnt={o:0,t:0,x:0};
-  const grp={};
-  rows.forEach(function(r,i){
-    const s=sel[i]; cnt[s.band]++;
-    const g=_ADV_GROUP[r.tag]||'사안포섭';
-    if(!grp[g]) grp[g]={g:g,e:0,t:0,loss:0};
-    grp[g].e+=r.pts*s.coef; grp[g].t+=r.pts; grp[g].loss+=r.pts*(1-s.coef);
-  });
-  const list=Object.values(grp).map(function(x){ x.r=x.t>0?x.e/x.t:1; return x; });
-  const pct=gridState.pct;
-  const sentences=[];
-  if(pct>=85) sentences.push('전체 논증 구조가 매칭채점표와 잘 맞습니다. 이제는 문구의 정확성을 다듬는 단계입니다.');
-  else if(pct>=71) sentences.push('답안의 골격은 갖추었지만, 일부 목차에서 문구의 정확성과 배열이 흔들립니다.');
-  else if(pct>=40) sentences.push('쟁점은 잡았으나 여러 목차에서 법리와 포섭이 불완전합니다. 목차별로 대전제 → 사안포섭 → 결론의 흐름을 다시 점검하세요.');
-  else sentences.push('매칭채점표의 목차 구조와 거리가 큽니다. 답안의 목차부터 다시 세우는 것이 먼저입니다.');
-  const strong=list.filter(function(x){return x.r>=0.85;}).map(function(x){return _ADV_LABEL[x.g];});
-  const weak=list.filter(function(x){return x.r<0.6;}).sort(function(a,b){return b.loss-a.loss;});
-  if(strong.length && weak.length) sentences.push('강점은 '+strong.join('·')+'입니다.');
-  weak.slice(0,2).forEach(function(x){ sentences.push(_ADV_WEAK[x.g]); });
-  if(!weak.length && pct<85){
-    const mid=list.filter(function(x){return x.r<0.85;}).sort(function(a,b){return b.loss-a.loss;})[0];
-    if(mid) sentences.push(_ADV_LABEL[mid.g]+'의 문구를 조금 더 정확하게 맞추면 점수가 오릅니다.');
-  }
-  if(rows.some(function(r,i){return sel[i].elsewhere && sel[i].elsewhere.length;}))
-    sentences.push('논증키워드가 제자리가 아닌 목차에 쓰인 곳이 있습니다. 목차 배열을 매칭채점표 순서에 맞추세요.');
-  if(gridState.forbidHits && gridState.forbidHits.length)
-    sentences.push('금지표현이 쓰인 목차는 논증이 맞아도 점수가 없습니다. 그 표현만 빼고 법리 문구로 바꾸면 해당 목차의 점수를 되찾을 수 있습니다.');
-  if(gridState.missing && gridState.missing.length)
-    sentences.push('핵심필수현출문구 가운데 답안에 나오지 않은 것이 있습니다. 절대누락부터 채우세요.');
-  if(pct<71) sentences.push('재작성처방의 위쪽 항목부터 고치면 다음 스테이지 기준(71점)에 가까워집니다.');
-  return {pct:pct, cnt:cnt, earned:gridState.earned, total:gridState.total, sentences:sentences,
-          summary:'매칭율 '+pct+'% ('+fmtPts(gridState.earned)+'/'+fmtPts(gridState.total)+'점) · ○'+cnt.o+' △'+cnt.t+' ✕'+cnt.x};
-}
-function renderAdvice(){
-  const box=document.getElementById('leftAdviceBox'); if(!box) return;
-  let rec={}; try{ rec=getCurrentProblem(); }catch(e){}
-  let html='';
-  const a=buildAdvice();
-  if(a){
-    if(!gridState.submitted) html+='<div class="lg-draft">자동 추천 밴드 기준 · 점수 반영 전</div>';
-    html+='<div class="ad-sum"><b>매칭율 '+a.pct+'%</b> ('+fmtPts(a.earned)+'/'+fmtPts(a.total)+'점) · '+
-      '<span class="lg-b o">○</span>'+a.cnt.o+' <span class="lg-b t">△</span>'+a.cnt.t+' <span class="lg-b x">✕</span>'+a.cnt.x+'</div>';
-    html+='<ul class="ad-list">'+a.sentences.map(function(t){return '<li>'+_esc(t)+'</li>';}).join('')+'</ul>';
+  const six=buildSixStep();
+  if(six){
+    if(!gridState.submitted) html+='<div class="lg-draft">자동 추천 밴드 기준 · 밴드를 바꾸면 처방도 바로 바뀝니다</div>';
+    html+='<div class="ad-sum"><b>예상득점 '+fmtPts(gridState.earned)+' / '+fmtPts(gridState.total)+'</b> · 달성률 '+gridState.pct+'% · <span class="lg-b o">○</span>'+gridState.sel.filter(function(s){return s.band==='o';}).length+' <span class="lg-b t">△</span>'+gridState.sel.filter(function(s){return s.band==='t';}).length+' <span class="lg-b x">✕</span>'+gridState.sel.filter(function(s){return s.band==='x';}).length+'</div>';
+    html+='<div class="sx-diag">';
+    html+=_sixLine('★ 절대누락', six.star, '없음');
+    html+=_sixLine('① 대전제 누락', six.d1, '없음');
+    html+=_sixLine('② 대전제 오적용', six.d2, '금지표현 없음 (그 밖의 오적용은 스스로 점검)');
+    html+=_sixLine('③ 판례문구 정합', six.d3, six.caseAllOk?'정확':'해당 목차 없음');
+    html+=_sixLine('④ 사안포섭 밀도', six.d4, six.factAllOk?'정확':'해당 목차 없음');
+    html+=_sixLine('⑤ 사안해결 정답논리', six.d5, '소결 목차 없음');
+    html+='</div>';
+    html+='<div class="sx-h">⑥ 재작성 처방 <span class="sx-type">【처방 유형】 '+_esc(six.types.join(' + '))+'</span></div>';
+    html+='<div class="sx-why"><b>왜 이 처방인가</b> '+_esc(six.why.join(' '))+'</div>';
+    if(six.items.length){
+      html+='<ol class="sx-list">'+six.items.map(function(it){
+        return '<li><span class="sx-n">'+it.n+'</span><span class="sx-tag sx-'+it.type+'">'+it.head+'</span> <b>'+_esc(_rowLabel(it.row))+'</b>'+(it.loss?' <span class="rx-loss">−'+fmtPts(it.loss)+'점</span>':'')+'<br>'+_esc(it.text).replace(/\n/g,'<br>')+'</li>';
+      }).join('')+'</ol>';
+    } else html+='<div class="rx-ok">모든 목차를 충족했습니다. 문구의 정확성만 다듬어 한 번 더 써 보세요.</div>';
+    if(six.keep.length) html+='<div class="sx-keep"><b>그대로 둘 것</b> '+_esc(six.keep.join(' · '))+' — 그대로 두세요.</div>';
+    html+='<div class="sx-cmp"><b>첨삭답안 대조</b> 파랑 교정 '+six.cnt.fix+'곳 · 초록 신설 '+six.cnt.ins+'곳 · 회색 삭제 '+six.cnt.del+'곳 — 아래 첨삭답안의 「처방 n」과 같은 번호끼리 대조하세요.</div>';
   } else if(kwRewrite){
     html+= kwRewrite.length
-      ? '<div class="ad-note warn">핵심키워드 '+kwRewrite.length+'개를 답안에 현출하지 못했습니다. 재작성처방의 누락 문구부터 채우세요.</div>'
+      ? '<div class="rx-unit rx-star"><div class="rx-cat">★ 절대누락</div><div class="rx-all-lead">다음 핵심키워드를 답안에 현출하세요: '+_esc(kwRewrite.join(' · '))+'</div></div>'
       : '<div class="rx-ok">핵심키워드를 모두 현출했습니다.</div>';
+    html+='<div class="lg-empty" style="margin-top:6px;">매칭채점표가 없는 문제는 핵심키워드 기준으로만 처방합니다.</div>';
   } else {
-    html+='<div class="lg-empty">「완료 및 채점하기」를 누르면 매칭채점표에 따라 답안 전체의 개선 방향이 자동으로 표시됩니다.</div>';
+    html+='<div class="lg-empty">「완료 및 채점하기」를 누르면 매칭채점표에 따라 ★ 절대누락 → ① 대전제 누락 → ② 대전제 오적용 → ③ 판례문구 정합 → ④ 사안포섭 밀도 → ⑤ 사안해결 정답논리 → ⑥ 재작성 처방이 표시됩니다.</div>';
   }
+  if(rec.rewrite) html+='<div class="rx-prof" style="margin-top:8px;"><div class="rx-h">교수자 처방</div>'+_esc(rec.rewrite).replace(/\n/g,'<br>')+'</div>';
+  box.innerHTML=html;
+}
+/* ── 첨삭답안 ── 학습자 답안 원문 + 처방을 제자리에 끼워 넣기 */
+function _markForbid(text, exprs){
+  // 금지표현이 든 문장에 취소선
+  const parts=String(text).split(/(?<=[.。?!]\s*)|(?<=\n)/);
+  return parts.map(function(sn){
+    const hit=exprs.some(function(e){ return _norm(sn).indexOf(_norm(e))>=0; });
+    return hit ? '<s class="rv-strike">'+_esc(sn)+'</s>' : _esc(sn);
+  }).join('').replace(/\n/g,'<br>');
+}
+function buildReview(){
+  const six=buildSixStep(); if(!six) return null;
+  const rows=gridState.rows, sel=gridState.sel;
+  const pieces=learnerPieces(rows);
+  const byIdx=pieces.map(function(){return [];});
+  const orphan=[], orphanFirst=[];
+  six.items.forEach(function(it){
+    const k=_mokKey(it.row.mok), roman=_romanOf(it.row.mok);
+    let idx=-1;
+    for(let i=0;i<pieces.length;i++){ if(_mokKey(pieces[i].mok)===k){ idx=i; break; } }
+    if(idx<0){ // 같은 하위 목차(Ⅲ-2)의 마지막 조각 뒤, 없으면 같은 절(Ⅲ)에서 번호가 앞선 마지막 소제목 뒤에
+      const parent=k.indexOf('(')>=0 ? k.slice(0,k.indexOf('(')) : null;
+      if(parent) for(let i=pieces.length-1;i>=0;i--){ if(_mokKey(pieces[i].mok).indexOf(parent)===0){ idx=i; break; } }
+      if(idx<0 && roman){
+        const ms=k.match(/-(\d+)/); const subN=ms?+ms[1]:99;
+        for(let i=pieces.length-1;i>=0;i--){
+          if(pieces[i].roman!==roman) continue;
+          const pm=_mokKey(pieces[i].mok).match(/-(\d+)/); const pn=pm?+pm[1]:0;
+          if(pn<=subN){ idx=i; break; }
+        }
+        if(idx<0) for(let i=0;i<pieces.length;i++){ if(pieces[i].roman===roman){ idx=i-1; break; } }   // 절의 첫 조각보다 앞
+      }
+    }
+    if(idx===-1 && roman && pieces.some(function(p){return p.roman===roman;})){ orphanFirst.push(it); return; }
+    if(idx<0) orphan.push(it); else byIdx[idx].push(it);
+  });
+  return {six:six, pieces:pieces, byIdx:byIdx, orphan:orphan, first:orphanFirst};
+}
+function _reviewBlock(it){
+  const cls=it.type==='ins'?'rv-ins':(it.type==='fix'?'rv-fix':'rv-del');
+  const icon=it.type==='ins'?'➕ 신설':(it.type==='fix'?'✎ 교정 참고':'⛔ 삭제');
+  let h='<div class="rv-blk '+cls+'"><div class="rv-head">'+icon+' · '+_esc(it.row.name)+' <span class="rv-n">처방 '+it.n+'</span></div>';
+  if(it.type==='fix' || it.type==='del') h+='<div class="rv-note">'+_esc(it.text).replace(/\n/g,'<br>')+'</div>';
+  if(it.model) h+='<div class="rv-model">'+_esc(it.model).replace(/\n/g,'<br>')+'</div><div class="rv-src">↳ 모범답안 '+_esc(it.row.mok)+'</div>';
+  else h+='<div class="rv-note">'+(it.type==='ins'?_esc(it.text):'')+'<br><span class="sx-none">모범답안에서 '+_esc(it.row.mok)+' 위치를 찾지 못해 문구를 끼워 넣지 못했습니다 — 정답 칸에서 확인하세요.</span></div>';
+  return h+'</div>';
+}
+function renderReview(){
+  const box=document.getElementById('leftReviewBox'); if(!box) return;
+  const rv=buildReview();
+  if(!rv){
+    let rec0={}; try{ rec0=getCurrentProblem(); }catch(e){}
+    box.innerHTML = (kwRewrite ? '<div class="lg-empty">매칭채점표가 등록되지 않은 문제는 첨삭답안을 만들 수 없습니다.</div>'
+      : '<div class="lg-empty">「완료 및 채점하기」를 누르면 학습자 답안 원문에 ➕ 신설(초록) · ✎ 교정 참고(파랑) · ⛔ 삭제(회색) 처방을 제자리에 끼워 넣은 첨삭답안이 표시됩니다.</div>')
+      + (rec0.advice && kwRewrite ? '<div class="rx-prof" style="margin-top:8px;"><div class="rx-h">교수자 보충</div>'+_esc(rec0.advice).replace(/\n/g,'<br>')+'</div>' : '');
+    return;
+  }
+  let html='';
+  if(!gridState.submitted) html+='<div class="lg-draft">자동 추천 밴드 기준 · 점수 반영 전</div>';
+  html+='<div class="rv-legend">검정 = 답안 원문 · <span class="rv-lg rv-ins">초록 = 신설</span> · <span class="rv-lg rv-fix">파랑 = 교정 참고</span> · <span class="rv-lg rv-del">회색 = 삭제</span> · 처방 n = 재작성 처방 번호</div>';
+  const forbidExprs=[]; gridState.sel.forEach(function(s){ (s.forbid||[]).forEach(function(e){ if(forbidExprs.indexOf(e)<0) forbidExprs.push(e); }); });
+  rv.first.forEach(function(it){ html+=_reviewBlock(it); });
+  rv.pieces.forEach(function(p,i){
+    const txt=String(p.text||'').replace(/\n+$/,'');
+    if(txt.trim()){
+      html+='<div class="rv-piece">'+(currentMode==='beginner' && p.mok ? '<div class="rv-cap">'+_esc(p.mok)+(p.label?' '+_esc(String(p.label).replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,'')):'')+'</div>' : '')+
+        '<div class="rv-text">'+(forbidExprs.length?_markForbid(txt,forbidExprs):_esc(txt).replace(/\n/g,'<br>'))+'</div></div>';
+    }
+    rv.byIdx[i].forEach(function(it){ html+=_reviewBlock(it); });
+  });
+  if(rv.orphan.length){
+    html+='<div class="rv-cap" style="margin-top:8px;">답안에 해당 목차가 없어 끝에 붙입니다</div>';
+    rv.orphan.forEach(function(it){ html+=_reviewBlock(it); });
+  }
+  let rec={}; try{ rec=getCurrentProblem(); }catch(e){}
   if(rec.advice) html+='<div class="rx-prof" style="margin-top:8px;"><div class="rx-h">교수자 보충</div>'+_esc(rec.advice).replace(/\n/g,'<br>')+'</div>';
   box.innerHTML=html;
 }
+/* 내보내기용 평문 */
+function sixStepText(){
+  const six=buildSixStep(); if(!six) return [];
+  const L=[];
+  L.push('★ 절대누락: '+(six.star.length?six.star.join(' · '):'없음'));
+  L.push('① 대전제 누락 여부: '+(six.d1.length?six.d1.join(' · '):'없음'));
+  L.push('② 대전제 오적용 여부: '+(six.d2.length?six.d2.join(' · '):'금지표현 없음'));
+  L.push('③ 판례문구 정합의 정도: '+(six.d3.length?six.d3.join(' · '):(six.caseAllOk?'정확':'해당 목차 없음')));
+  L.push('④ 사안포섭의 밀도: '+(six.d4.length?six.d4.join(' · '):(six.factAllOk?'정확':'해당 목차 없음')));
+  L.push('⑤ 사안해결 정답논리: '+(six.d5.length?six.d5.join(' · '):'소결 목차 없음'));
+  L.push('⑥ 재작성 처방 【처방 유형】 '+six.types.join(' + '));
+  L.push('왜 이 처방인가: '+six.why.join(' '));
+  six.items.forEach(function(it){ L.push(it.n+'. '+it.head+' '+_rowLabel(it.row)+(it.loss?' (−'+fmtPts(it.loss)+'점)':'')+' — '+String(it.text).replace(/\n/g,' / ')); });
+  if(six.keep.length) L.push('그대로 둘 것: '+six.keep.join(' · ')+' — 그대로 두세요.');
+  L.push('첨삭답안 대조: 파랑 교정 '+six.cnt.fix+'곳 · 초록 신설 '+six.cnt.ins+'곳 · 회색 삭제 '+six.cnt.del+'곳');
+  return L;
+}
+function reviewText(){
+  const rv=buildReview(); if(!rv) return [];
+  const L=[];
+  rv.first.forEach(function(it){ L.push('  ┌ '+it.head+' · '+it.row.name+' · 처방 '+it.n); if(it.model) String(it.model).split('\n').forEach(function(l){ L.push('  │ '+l); }); L.push('  └ 모범답안 '+it.row.mok); });
+  rv.pieces.forEach(function(p,i){
+    const txt=String(p.text||'').replace(/\n+$/,'');
+    if(txt.trim()){ if(currentMode==='beginner' && p.mok) L.push('['+p.mok+(p.label?' '+String(p.label).replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,''):'')+']'); L.push(txt); }
+    rv.byIdx[i].forEach(function(it){
+      L.push('  ┌ '+(it.type==='ins'?'➕ 신설':(it.type==='fix'?'✎ 교정 참고':'⛔ 삭제'))+' · '+it.row.name+' · 처방 '+it.n);
+      if(it.type!=='ins') L.push('  │ '+String(it.text).replace(/\n/g,' / '));
+      if(it.model) String(it.model).split('\n').forEach(function(l){ L.push('  │ '+l); });
+      L.push('  └ 모범답안 '+it.row.mok);
+    });
+  });
+  rv.orphan.forEach(function(it){ L.push('  ┌ '+it.head+' (답안에 해당 목차 없음) · '+it.row.name+' · 처방 '+it.n); if(it.model) String(it.model).split('\n').forEach(function(l){ L.push('  │ '+l); }); L.push('  └ 모범답안 '+it.row.mok); });
+  return L;
+}
+function renderAdvice(){ /* r14: 답안개선방안 칸은 재작성처방(6단)으로 통합 */ }
 function refreshAutoFeedback(){
   if(typeof renderLeftGrid==='function') renderLeftGrid();
-  renderAdvice();
-  if(typeof renderRewrite==='function') renderRewrite();
+  renderRewrite();
+  renderReview();
 }
-window.addEventListener('DOMContentLoaded', function(){ setTimeout(renderAdvice,0); });
+window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ renderLeftGrid(); renderRewrite(); renderReview(); },0); });
+
 
 /* ================= 매칭채점표 · 처방 추가 업로드 ================= */
 function parseAttachText(text){
@@ -4048,20 +4235,24 @@ document.getElementById('exportBtn').addEventListener('click',()=>{
     if(gridState.missing && gridState.missing.length) lines.push('핵심필수현출문구 미현출: '+gridState.missing.join(' · '));
   }
 
-  const _ad=buildAdvice();
-  if(_ad && gridState.submitted){
+  const _six=sixStepText();
+  if(_six.length){
     lines.push('');
-    lines.push('----- 답안개선방안 -----');
-    lines.push(_ad.summary);
-    _ad.sentences.forEach(function(t){ lines.push('· '+t); });
-  }
-  const _rx=buildRewriteItems();
-  if(_rx && _rx.length){
+    lines.push('----- 재작성처방 (6단) -----');
+    _six.forEach(function(t){ lines.push(t); });
+  } else if(kwRewrite){
     lines.push('');
     lines.push('----- 재작성처방 -----');
-    _rx.forEach(function(it){ lines.push('['+it.head+'] '+(it.mok?it.mok+' '+it.name+' — ':'')+String(it.text).replace(/\n/g,' / ')); });
+    lines.push(kwRewrite.length ? '★ 절대누락: '+kwRewrite.join(' · ') : '핵심키워드 모두 현출');
   }
   if(getCurrentProblem().rewrite){ lines.push('교수자 처방: '+getCurrentProblem().rewrite); }
+  if(getCurrentProblem().advice){ lines.push('교수자 보충: '+getCurrentProblem().advice); }
+  const _rv=reviewText();
+  if(_rv.length){
+    lines.push('');
+    lines.push('----- 첨삭답안 (답안 원문 + 처방 삽입) -----');
+    _rv.forEach(function(t){ lines.push(t); });
+  }
 
   lines.push('');
   if(currentMode==='ultra'){
