@@ -205,9 +205,9 @@ header{
 .ultra-paper-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;border-bottom:2px solid #222;padding-bottom:9px;margin-bottom:10px;font-weight:800;}
 .ultra-paper-head .left{font-size:12px;}.ultra-paper-head .center{text-align:center;font-size:15px;}.ultra-paper-head .right{text-align:right;font-size:11px;font-weight:600;}
 .ultra-lines{display:flex;flex-direction:column;}
-.ultra-line{display:grid;grid-template-columns:34px 1fr;min-height:27px;border-bottom:1px solid #aaa;}
+.ultra-line{display:grid;grid-template-columns:34px 1fr auto;align-items:stretch;min-height:27px;border-bottom:1px solid #aaa;}
 .ultra-line-no{display:flex;align-items:center;justify-content:center;border-right:1px solid #aaa;font-size:10px;color:#777;user-select:none;}
-.ultra-line-input{width:100%;height:26px;min-height:26px;resize:none;overflow:hidden;border:0;outline:0;padding:2px 7px;font-family:inherit;font-size:13px;line-height:21px;background:#fff;color:var(--ink);box-sizing:border-box;display:block;}
+.ultra-line-input{width:100%;height:26px;min-height:26px;resize:none;overflow:hidden;border:0;outline:0;padding:2px 7px;font-family:inherit;font-size:12.5px;letter-spacing:-.02em;line-height:21px;white-space:pre-wrap;word-break:break-all;overflow-wrap:anywhere;background:#fff;color:var(--ink);box-sizing:border-box;display:block;}
 .ultra-line-input::placeholder{color:#c0bdb5;}
 .ultra-line-count{font-size:9px;color:#b2aea5;padding:0 5px;white-space:nowrap;display:flex;align-items:center;}
 .ultra-line.is-full .ultra-line-count{color:var(--green);font-weight:700;}
@@ -219,7 +219,22 @@ header{
 .ultra-nav button:disabled{opacity:.4;cursor:not-allowed;}
 .ultra-page-index{font-size:12px;font-weight:800;color:var(--navy);min-width:62px;text-align:center;}
 .ultra-submit-note{font-size:11px;color:var(--muted);line-height:1.5;}
-@media(max-width:700px){.ultra-paper{padding:12px 10px;}.ultra-line{grid-template-columns:27px 1fr;min-height:25px;}.ultra-line-input{height:24px;font-size:12px;}.ultra-paper-head{grid-template-columns:1fr auto;}.ultra-paper-head .right{display:none;}}
+.ultra-toolbar .step-admin-gear{margin-left:auto;font-size:12px;}
+.ultra-tools{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.ultra-tools .ct-group{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:#fff;}
+.ultra-tools button{border:none;background:#fff;color:#5a5648;font-family:inherit;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;line-height:1.3;}
+.ultra-tools .ct-group button+button{border-left:1px solid var(--line);}
+.ultra-tools button:hover{background:var(--paper);color:var(--navy);}
+.ultra-tools button.on{background:var(--navy);color:#fff;}
+.ultra-line-input{font-size:var(--ultra-fs,12.5px);}
+/* 답안지 폭: 넓게 = 우측 패널 숨김 · 전체 = 좌·우 패널 모두 숨김 (초상급자 모드에서만) */
+body.ultra-wide .layout > :nth-child(3){display:none !important;}
+body.ultra-wide .layout{grid-template-columns:var(--lw,280px) minmax(0,1fr);}
+body.ultra-full .layout > :nth-child(1), body.ultra-full .layout > :nth-child(3){display:none !important;}
+body.ultra-full .layout{grid-template-columns:minmax(0,1fr);}
+@media (max-width:1200px) and (min-width:768px){ body.ultra-wide .layout{grid-template-columns:var(--lw-tab,260px) minmax(0,1fr);} }
+@media (max-width:767px){ body.ultra-wide .layout, body.ultra-full .layout{grid-template-columns:1fr;} }
+@media(max-width:700px){.ultra-paper{padding:12px 10px;}.ultra-line{grid-template-columns:27px 1fr auto;min-height:25px;}.ultra-line-input{font-size:12px;}.ultra-paper-head{grid-template-columns:1fr auto;}.ultra-paper-head .right{display:none;}}
 
 .steps-grid{
   display:grid;
@@ -475,6 +490,10 @@ header{
 #gridMust .gm{font-size:11.5px;border-radius:6px;padding:3px 9px;border:1px solid var(--line);background:var(--paper);}
 #gridMust .gm.ok{background:#e5f3ea;border-color:#b9dcc6;color:#1f6a3f;}
 #gridMust .gm.no{background:#fbeceb;border-color:#efc4c1;color:var(--red);font-weight:700;}
+#gridMust .gm.warn{background:#fdf3e6;border-color:#f1d3a8;color:#a0561a;font-weight:700;}
+.gc-forbid{font-size:11.5px;font-weight:700;color:var(--red);margin-top:4px;}
+.gc-row.forbid .gc-mok{border-color:#efc4c1;background:#fbeceb;color:var(--red);}
+.rx-unit.rx-forbid .rx-cat{color:var(--red);}
 .gc-note{font-size:11px;color:var(--muted);margin-top:8px;}
 .gc-total{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;margin-top:12px;padding:10px 12px;background:#f3f5fb;border:1px solid #dde3f2;border-radius:8px;}
 .gc-total b{font-size:18px;color:var(--navy);}
@@ -638,7 +657,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <header>
   <div class="brand">
     <div class="brand-line">
-      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r5">1행2필</span>
+      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r9">1행2필</span>
       <span class="domain-badge" id="domainBadge">감평사 보상법규</span>
       <span class="brand-desc">사례형 답안 학습엔진</span>
       <span class="step-admin-gear" id="domainEditBtn" title="학습영역 설정">⚙</span>
@@ -886,7 +905,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <!-- ADMIN CONSOLE -->
 <div class="admin-console" id="adminConsole">
   <div class="admin-head">
-    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r5</span></div>
+    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r9</span></div>
     <button class="hbtn danger" id="adminClose">모드 종료 ✕</button>
   </div>
   <div class="admin-tabs">
@@ -928,7 +947,8 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
           정답: (필수) 로마숫자 목차(Ⅰ. Ⅱ. …)가 살아 있는 모범답안 전문<br>
           핵심논리: (선택) 한두 문장 요지 — 채점 후 학습자에게 공개되고 원고 내보내기에도 들어갑니다<br>
           핵심키워드: (선택) / 또는 , 로 구분 — 매칭채점표가 없을 때 채점 기준으로 쓰입니다<br>
-          매칭채점표: (선택·권장) 한 줄에 한 목차씩 <code>목차 | 목차명 | 구분 | 논증키워드 | 배점</code>, 바로 아래 줄에 <code>핵심필수현출문구: …</code><br>
+          매칭채점표: (선택·권장) 한 줄에 한 목차씩 <code>목차 | 목차명 | 구분 | 논증키워드 | 배점</code>, 바로 아래 줄에 <code>핵심필수현출문구: …</code>, 필요하면 그 아래 <code>금지표현: … · …</code><br>
+          ※ 금지표현은 답안에서 <b>그 표현이 나온 목차만 0점</b>이 되고 다른 목차는 그대로 채점됩니다.<br>
           ※ 답안개선방안·재작성처방은 「완료 및 채점하기」 때 매칭채점표로 <b>자동 생성</b>됩니다. 따로 덧붙일 말이 있을 때만 <code>답안개선방안:</code> <code>재작성처방:</code>을 적으면 「교수자 보충」으로 함께 표시됩니다.<br><br>
           <b>※ 단원·주제·사례지문·정답 4개 항목이 있어야 등록됩니다.</b> 누락 시 건너뛰고 사유를 안내합니다. 매칭채점표와 핵심키워드가 모두 없으면 채점할 기준이 없으므로 등록은 하되 경고를 표시합니다. 각 항목명은 줄 맨 앞에 적으세요.<br>
           ※ 같은 파일을 다시 올리면 수정이 아니라 <b>중복 등록</b>됩니다. 내용 수정은 아래 「등록된 문제 목록」의 수정 버튼을 쓰세요.
@@ -1076,7 +1096,7 @@ function checkMiddleVersion(){
 // 사례별 목차 키 — 사례번호별로 독립 저장
 function getProblemMiddleKey(number){ return '1h2p_gp_middle_'+number; }
 
-// 답안(정답)에서 쟁점 목차를 자동 도출 — 로마숫자=쟁점, 1.학설/2.판례/3.검토/4.사안의 경우=탭
+// 답안(정답)에서 쟁점 목차를 자동 도출 — 로마숫자=쟁점, 그 아래 "1. ○○" 같은 짧은 번호 제목=탭 (r6: 학설·판례 외의 하위 목차도 인식)
 function deriveMiddleFromAnswer(answer){
   if(!answer) return null;
   var ROM='ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ';
@@ -1084,7 +1104,13 @@ function deriveMiddleFromAnswer(answer){
   answer.split('\n').forEach(function(raw){
     var ln=raw.trim();
     var mR=ln.match(new RegExp('^(['+ROM+'])\\.\\s*(.+)$'));
-    var mS=ln.match(/^\d+\.\s*(문제의 소재|학설|판례|검토|사안의 경우)(?=\s|$)/);
+    var mN=ln.match(/^\d+\.\s*(.+)$/);
+    var mS=null;
+    if(mN){
+      // 제목으로 볼 만한 짧은 줄만 하위 목차로 인정(문장으로 끝나는 번호 목록은 제외)
+      var st=mN[1].replace(/[\s:：]+$/,'').trim();
+      if(st.length && st.length<=30 && !/(다|음|함|임)\.?$/.test(st)) mS=[null, st.length>24? st.slice(0,24)+'…' : st];
+    }
     if(mR){
       var title=mR[2];
       var mm=title.match(/^(.*?(?:여부|인지|되는지|가능한지|해당하는지))/);
@@ -1262,8 +1288,81 @@ function getStepText(i){
    - 한 줄 20자 원고지. 한글 조합(IME) 중에는 절대 줄을 옮기지 않는다.
    - 20자를 넘긴 글자는 조합이 끝난 뒤(잠깐 멈추거나 다음 줄로 이동할 때) 다음 줄로 흘려 보낸다.
    - 문단 중간에 끼워 쓰거나 붙여넣으면 뒤쪽 줄은 지워지지 않고 아래로 밀린다. */
-const ULTRA_PAGES=16, ULTRA_LINES=22, ULTRA_CHARS_PER_LINE=20;
-const ULTRA_TOTAL=ULTRA_PAGES*ULTRA_LINES;
+/* ── r7: 답안지 규격 (모범답안 파일 실측값) ──
+   KoPub바탕 10pt · 자간 −3% · 줄간격 168%(줄 피치 16.8pt) · 본문 폭 143mm
+   → 꽉 찬 한 줄 = 공백 포함 56자(실측 중앙값, 51~61자), 한 페이지 = 32줄(본문 높이 194mm ÷ 16.8pt)
+   → 분량 지표: 20점 문제 26줄, 15점 문제 19줄 ≈ 1.3줄/점
+   관리자 ⚙(답안지 규격)에서 바꿀 수 있고, 값은 이 브라우저에 저장된다. */
+const ULTRA_CFG_KEY='1h2p_gp_ultra_cfg';
+/* r8: 실제 답안지는 한 줄 80칸. 10pt 모범답안 한 줄(56자)을 80칸으로 환산하면 20점≈18줄 → 0.9줄/점 */
+const ULTRA_DEFAULT={chars:80, lines:32, pages:4, lpp:0.9, font:'KoPub바탕 10pt · 자간 −3% · 줄간격 168%'};
+let ULTRA_PAGES=4, ULTRA_LINES=32, ULTRA_CHARS_PER_LINE=80, ULTRA_LPP=0.9, ULTRA_TOTAL=128;
+function loadUltraCfg(){
+  let c={};
+  try{ c=JSON.parse(localStorage.getItem(ULTRA_CFG_KEY))||{}; }catch(e){}
+  ULTRA_CHARS_PER_LINE=Math.max(10,Math.min(120,parseInt(c.chars)||ULTRA_DEFAULT.chars));
+  ULTRA_LINES=Math.max(5,Math.min(60,parseInt(c.lines)||ULTRA_DEFAULT.lines));
+  ULTRA_PAGES=Math.max(1,Math.min(20,parseInt(c.pages)||ULTRA_DEFAULT.pages));
+  ULTRA_LPP=parseFloat(c.lpp)||ULTRA_DEFAULT.lpp;
+  ULTRA_TOTAL=ULTRA_PAGES*ULTRA_LINES;
+}
+loadUltraCfg();
+/* 문제 배점(매칭채점표 배점 합)으로 목표 줄 수를 추정 */
+function ultraTargetLines(){
+  let pts=0; try{ parseMatchGrid(getCurrentProblem().grid).rows.forEach(function(r){pts+=r.pts;}); }catch(e){}
+  return pts>0 ? Math.round(pts*ULTRA_LPP) : 0;
+}
+function ultraUsedLines(){ return ultraGetAll().reduce(function(n,v,i){return v?i+1:n;},0); }
+/* r9: 답안지 보기 설정 — 폭(보통/넓게/전체) · 글자 크기, 이 기기에 저장 */
+const ULTRA_VIEW_KEY='1h2p_gp_ultra_view';
+let ULTRA_VIEW={w:'normal', fs:12.5};
+try{ const v=JSON.parse(localStorage.getItem(ULTRA_VIEW_KEY)); if(v){ if(v.w) ULTRA_VIEW.w=v.w; if(v.fs) ULTRA_VIEW.fs=+v.fs; } }catch(e){}
+function applyUltraView(){
+  const on=currentMode==='ultra';
+  document.body.classList.toggle('ultra-wide', on && ULTRA_VIEW.w==='wide');
+  document.body.classList.toggle('ultra-full', on && ULTRA_VIEW.w==='full');
+  document.documentElement.style.setProperty('--ultra-fs', ULTRA_VIEW.fs+'px');
+  document.querySelectorAll('.ultra-tools [data-uw]').forEach(function(b){ b.classList.toggle('on', b.dataset.uw===ULTRA_VIEW.w); });
+  document.querySelectorAll('.ultra-line-input').forEach(ultraFit);
+}
+function saveUltraView(){ try{ localStorage.setItem(ULTRA_VIEW_KEY, JSON.stringify(ULTRA_VIEW)); }catch(e){} }
+function openUltraCfgEditor(){
+  if(!adminAuthed){ askAdminPassword(function(){openUltraCfgEditor();}); return; }
+  const overlay=document.createElement('div'); overlay.className='prompt-editor-overlay';
+  overlay.innerHTML='<div class="prompt-editor-box" style="max-width:460px;">'+
+    '<h4>초상급자 답안지 규격</h4>'+
+    '<div class="api-key-note" style="margin-bottom:10px;">기본값: 실제 답안지 한 줄 80칸(공백 포함 80자), 한 페이지 32줄. 목표 줄 수는 10pt 모범답안 실측(한 줄 56자, 20점≈26줄)을 80칸으로 환산한 0.9줄/점입니다. 바꾸면 이미 쓴 답안은 새 규격으로 다시 흘려 넣습니다.</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'+
+    '<label style="font-size:12px;">한 줄 글자 수<input class="admin-input" id="ucChars" type="number" min="10" max="120" value="'+ULTRA_CHARS_PER_LINE+'"></label>'+
+    '<label style="font-size:12px;">한 페이지 줄 수<input class="admin-input" id="ucLines" type="number" min="5" max="60" value="'+ULTRA_LINES+'"></label>'+
+    '<label style="font-size:12px;">페이지 수<input class="admin-input" id="ucPages" type="number" min="1" max="20" value="'+ULTRA_PAGES+'"></label>'+
+    '<label style="font-size:12px;">배점 1점당 목표 줄 수<input class="admin-input" id="ucLpp" type="number" step="0.1" min="0" max="5" value="'+ULTRA_LPP+'"></label>'+
+    '</div><div class="prompt-editor-actions">'+
+    '<button class="admin-btn secondary" id="ucDefault" style="width:auto;">실측 기본값</button><div style="flex:1;"></div>'+
+    '<button class="btn-secondary" id="ucCancel">취소</button><button class="btn-submit" id="ucSave" style="flex:none;">저장</button></div></div>';
+  document.body.appendChild(overlay);
+  document.getElementById('ucCancel').onclick=function(){overlay.remove();};
+  document.getElementById('ucDefault').onclick=function(){ ['Chars','Lines','Pages','Lpp'].forEach(function(k){ document.getElementById('uc'+k).value=ULTRA_DEFAULT[k.toLowerCase()]; }); };
+  document.getElementById('ucSave').onclick=function(){
+    // 현재 규격으로 읽어 둔 뒤 새 규격으로 다시 배치 (모든 문제)
+    const ids=Object.keys(localStorage).filter(function(k){return k.indexOf(ULTRA_ANS_KEY+'_')===0;}).map(function(k){return k.slice(ULTRA_ANS_KEY.length+1);});
+    const dump={};
+    ids.forEach(function(id){ const st=loadAnswers(id).ultra||{}; const a=[]; for(let p=1;p<=ULTRA_PAGES;p++) for(let l=1;l<=ULTRA_LINES;l++) a.push(st['p'+p+'l'+l]||'');
+      let t=''; a.forEach(function(v,i){ t+=v; if(i<a.length-1) t+=(ultraChars(v)>=ULTRA_CHARS_PER_LINE?'':'\n'); });   // 꽉 찬 줄은 다음 줄과 이어진 문장
+      dump[id]=t.replace(/\n+$/,''); });
+    const cfg={chars:+document.getElementById('ucChars').value, lines:+document.getElementById('ucLines').value, pages:+document.getElementById('ucPages').value, lpp:+document.getElementById('ucLpp').value};
+    localStorage.setItem(ULTRA_CFG_KEY, JSON.stringify(cfg));
+    loadUltraCfg();
+    ids.forEach(function(id){
+      const o=loadAnswers(id); o.ultra={};
+      const lines=[]; dump[id].split('\n').forEach(function(seg){ ultraChunk(seg).forEach(function(x){lines.push(x);}); });
+      lines.slice(0,ULTRA_TOTAL).forEach(function(v,i){ if(v){ const q=ultraPos(i); o.ultra[ultraKey(q.p,q.l)]=v; } });
+      try{ localStorage.setItem(ULTRA_ANS_KEY+'_'+id, JSON.stringify(o.ultra)); }catch(e){}
+    });
+    overlay.remove(); ultraPage=1; if(currentMode==='ultra') renderSteps();
+    toast('답안지 규격을 저장했습니다 — 한 줄 '+ULTRA_CHARS_PER_LINE+'자 · '+ULTRA_LINES+'줄 × '+ULTRA_PAGES+'페이지');
+  };
+}
 let ultraPage=1;
 let ultraComposing=false, ultraTimer=null;
 function saveUltraSaved(){
@@ -1346,18 +1445,52 @@ function ultraRewrite(i, before, insert, after, lineWasFull){
   while(out.length>ULTRA_TOTAL){ const v=out.pop(); if(v) lost=true; }
   while(out.length<ULTRA_TOTAL) out.push('');
   ultraSetAll(out);
-  if(lost) toast('답안지 마지막 줄(352줄)을 넘어선 부분은 들어가지 못했습니다');
+  if(lost) toast('답안지 마지막 줄('+ULTRA_TOTAL+'줄)을 넘어선 부분은 들어가지 못했습니다');
   return {idx:Math.min(i+caretLine, ULTRA_TOTAL-1), col:caretCol};
+}
+/* r7: 줄을 넘어가는 Backspace·Delete — 줄 i부터 문단 끝까지를 한 문장으로 이어 붙여 고친 뒤 다시 흘려 넣는다 */
+function ultraParaEnd(a,i){ let e=i; while(e+1<a.length && a[e+1] && ultraChars(a[e])>=ULTRA_CHARS_PER_LINE) e++; return e; }
+function ultraSplice(start,end,text,caretChars){
+  const N=ULTRA_CHARS_PER_LINE, a=ultraGetAll();
+  const newLines=text?ultraChunk(text):[];
+  let out=a.slice(0,start).concat(newLines, a.slice(end+1));
+  while(out.length>ULTRA_TOTAL) out.pop();
+  while(out.length<ULTRA_TOTAL) out.push('');
+  ultraSetAll(out);
+  let idx=start+Math.floor(caretChars/N), col=caretChars%N;
+  if(caretChars>0 && col===0){ idx--; col=N; }
+  if(!text){ idx=Math.max(0,start-1); col=ultraChars(out[idx]); }
+  return {idx:Math.min(idx,ULTRA_TOTAL-1), col:col};
+}
+function ultraBackspaceAtStart(i){
+  const N=ULTRA_CHARS_PER_LINE, a=ultraGetAll();
+  if(i<=0) return null;
+  if(!a[i]){ return ultraSplice(i,i,'',0); }                       // 빈 줄 지우기 → 아래 줄들이 올라옴
+  const prev=a[i-1], prevFull=ultraChars(prev)>=N;
+  const head=prevFull ? Array.from(prev).slice(0,-1).join('') : prev;   // 이어진 줄이면 앞줄 마지막 글자 삭제, 아니면 줄 합치기
+  const e=ultraParaEnd(a,i);
+  return ultraSplice(i-1,e, head+a.slice(i,e+1).join(''), ultraChars(head));
+}
+function ultraDeleteAtEnd(i){
+  const N=ULTRA_CHARS_PER_LINE, a=ultraGetAll();
+  if(i+1>=a.length) return null;
+  const cur=a[i], next=a[i+1];
+  if(!next && ultraChars(cur)<N){ return ultraSplice(i+1,i+1,'',0) && {idx:i,col:ultraChars(cur)}; }   // 아래 빈 줄 지우기
+  const rest=(ultraChars(cur)>=N ? Array.from(next).slice(1).join('') : next);   // 이어진 줄이면 다음 줄 첫 글자 삭제, 아니면 줄 합치기
+  const e=ultraParaEnd(a,i+1);
+  return ultraSplice(i,e, cur+rest+a.slice(i+2,e+1).join(''), ultraChars(cur));
 }
 function ultraCaretChars(inp){
   const s=inp.selectionStart==null?inp.value.length:inp.selectionStart;
   return inp.value.slice(0,s);
 }
 /* 현재 페이지 입력칸 값을 저장값으로 갱신(다시 그리지 않음 → 포커스·조합이 깨지지 않음) */
+function ultraFit(el){ el.style.height='26px'; if(el.scrollHeight>el.clientHeight) el.style.height=el.scrollHeight+'px'; const c=el.parentElement.querySelector('.ultra-line-count'); if(c) c.textContent=ultraChars(el.value)+'/'+ULTRA_CHARS_PER_LINE; }
 function ultraRefreshInputs(){
   document.querySelectorAll('.ultra-line-input').forEach(el=>{
     const v=getUltraValue(+el.dataset.ultraPage,+el.dataset.ultraLine);
     if(el.value!==v) el.value=v;
+    ultraFit(el);
     el.parentElement.classList.toggle('is-full', ultraChars(v)>=ULTRA_CHARS_PER_LINE);
     el.parentElement.classList.toggle('is-over', ultraChars(v)>ULTRA_CHARS_PER_LINE);
   });
@@ -1404,15 +1537,37 @@ function renderUltraAnswerSheet(){
   let h='<div class="ultra-paper-head"><div class="left">1행2필 · 실전답안</div><div class="center">'+esc(prob.topic||'사례형 답안')+' — 초상급자</div><div class="right">답안지 '+p+' / '+ULTRA_PAGES+'</div></div><div class="ultra-lines">';
   for(let l=1;l<=ULTRA_LINES;l++){
     const val=getUltraValue(p,l), cnt=ultraChars(val), full=cnt>=ULTRA_CHARS_PER_LINE?' is-full':'';
-    h+='<div class="ultra-line'+full+'"><div class="ultra-line-no">'+l+'</div><input class="ultra-line-input" data-ultra-page="'+p+'" data-ultra-line="'+l+'" value="'+esc(val)+'" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="'+ULTRA_CHARS_PER_LINE+'자"></div>';
+    h+='<div class="ultra-line'+full+'"><div class="ultra-line-no">'+l+'</div><textarea class="ultra-line-input" rows="1" data-ultra-page="'+p+'" data-ultra-line="'+l+'" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="'+ULTRA_CHARS_PER_LINE+'칸">'+esc(val)+'</textarea><span class="ultra-line-count">'+cnt+'/'+ULTRA_CHARS_PER_LINE+'</span></div>';
   }
-  h+='</div><div class="ultra-footer"><span>※ 한 줄 '+ULTRA_CHARS_PER_LINE+'자 기준 · 200자 원고지 방식 · 공백 포함</span><span>'+p+' / '+ULTRA_PAGES+'</span></div>';
+  h+='</div><div class="ultra-footer"><span>※ 한 줄 '+ULTRA_CHARS_PER_LINE+'칸(공백 포함 · 한 글자 한 칸) · 화면이 좁으면 한 줄이 접혀 보이지만 답안지에서는 한 줄입니다</span><span>'+p+' / '+ULTRA_PAGES+'</span></div>';
   paper.innerHTML=h; grid.appendChild(paper);
   const nav=document.createElement('div'); nav.className='ultra-nav'; nav.innerHTML='<button id="ultraPrev" '+(p===1?'disabled':'')+'>← 이전</button><span class="ultra-page-index">'+p+' / '+ULTRA_PAGES+'</span><button id="ultraNext" '+(p===ULTRA_PAGES?'disabled':'')+'>다음 →</button>'; grid.appendChild(nav);
-  const note=document.createElement('div'); note.className='ultra-submit-note'; note.innerHTML='총 <b>16페이지 × 22줄 = 352줄</b>입니다. <b>각 줄은 20자</b>를 넘기면 다음 줄로 자동으로 넘어갑니다. 한글은 글자 조합이 끝난 뒤 넘어가므로, 빠르게 칠 때는 잠깐 20자를 넘겨 보였다가 곧 정리됩니다. 문단 중간에 끼워 쓰거나 붙여넣으면 뒤쪽 내용은 지워지지 않고 아래로 밀립니다.'; grid.appendChild(note);
+  const used=ultraUsedLines(), tgt=ultraTargetLines();
+  const bar=document.createElement('div'); bar.className='ultra-toolbar'; bar.id='ultraVolume';
+  bar.innerHTML='<span><b>사용 '+used+'줄</b> / '+ULTRA_TOTAL+'줄'+(tgt?' · 이 문제 목표 <b>약 '+tgt+'줄</b> <span class="gc-sub">(배점 '+fmtPts(tgt/ULTRA_LPP)+'점 × '+ULTRA_LPP+'줄/점)</span>':'')+'</span>'+
+    '<span class="ultra-tools">'+
+      '<span class="ct-group" title="답안 영역의 폭"><button data-uw="normal">보통</button><button data-uw="wide">넓게</button><button data-uw="full">전체</button></span>'+
+      '<span class="ct-group" title="글자 크기"><button data-ua="fs-">가−</button><button data-ua="fs+">가+</button></span>'+
+      '<span class="ct-group"><button data-ua="case" title="사례문제를 작은 창으로 옆에 띄우기">📌 사례 옆에 띄우기</button></span>'+
+      '<span class="step-admin-gear" id="ultraCfgBtn" title="답안지 규격 설정(관리자)" style="margin-left:4px;">⚙ 규격</span>'+
+    '</span>';
+  grid.insertBefore(bar, paper);
+  document.getElementById('ultraCfgBtn').onclick=openUltraCfgEditor;
+  bar.querySelector('.ultra-tools').addEventListener('click',function(e){
+    const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.uw) ULTRA_VIEW.w=b.dataset.uw;
+    else if(b.dataset.ua==='fs-') ULTRA_VIEW.fs=Math.max(10, +(ULTRA_VIEW.fs-1).toFixed(1));
+    else if(b.dataset.ua==='fs+') ULTRA_VIEW.fs=Math.min(20, +(ULTRA_VIEW.fs+1).toFixed(1));
+    else if(b.dataset.ua==='case'){ if(window.h2pOpenCaseReader) window.h2pOpenCaseReader('float'); return; }
+    saveUltraView(); applyUltraView();
+    if(ULTRA_VIEW.w==='full') toast('좌·우 패널을 숨겼습니다 — 「사례 옆에 띄우기」로 사례를 함께 볼 수 있습니다');
+  });
+  applyUltraView();
+  const note=document.createElement('div'); note.className='ultra-submit-note'; note.innerHTML='총 <b>'+ULTRA_PAGES+'페이지 × '+ULTRA_LINES+'줄 = '+ULTRA_TOTAL+'줄</b>입니다. <b>각 줄은 '+ULTRA_CHARS_PER_LINE+'칸</b>(공백 포함)이 다 차면 다음 줄로 자동으로 넘어갑니다 — 실제 답안지와 같은 칸 수입니다. 한글은 글자 조합이 끝난 뒤 넘어가므로, 빠르게 칠 때는 잠깐 넘겨 보였다가 곧 정리됩니다. 문단 중간에 끼워 쓰거나 붙여넣으면 뒤쪽 내용은 지워지지 않고 아래로 밀립니다.'; grid.appendChild(note);
 
   grid.querySelectorAll('.ultra-line-input').forEach(inp=>{
     inp._base=ultraChars(inp.value);
+    ultraFit(inp);
     inp.addEventListener('focus',()=>{ inp._base=ultraChars(inp.value); });
     inp.addEventListener('compositionstart',()=>{ ultraComposing=true; clearTimeout(ultraTimer); });
     inp.addEventListener('compositionend',()=>{
@@ -1437,7 +1592,10 @@ function renderUltraAnswerSheet(){
     });
     inp.addEventListener('input',e=>{
       const pg=+inp.dataset.ultraPage, line=+inp.dataset.ultraLine;
+      if(/[\r\n]/.test(inp.value)){ inp.value=inp.value.replace(/[\r\n]+/g,''); }
       setUltraValue(pg,line,inp.value);
+      const vb=document.querySelector('#ultraVolume b'); if(vb) vb.textContent='사용 '+ultraUsedLines()+'줄';
+      ultraFit(inp);
       inp.parentElement.classList.toggle('is-full',ultraChars(inp.value)>=ULTRA_CHARS_PER_LINE);
       inp.parentElement.classList.toggle('is-over',ultraChars(inp.value)>ULTRA_CHARS_PER_LINE);
       if(ultraComposing || e.isComposing || e.inputType==='insertCompositionText'){ return; }
@@ -1451,14 +1609,16 @@ function renderUltraAnswerSheet(){
         clearTimeout(ultraTimer);
         if(ultraChars(inp.value)>ULTRA_CHARS_PER_LINE){ ultraFlow(inp,false); }
         ultraFocus(pg,line+1);
-      } else if(e.key==='Backspace' && inp.selectionStart===0 && inp.selectionEnd===0 && !inp.value){
-        if(line>1){
-          e.preventDefault();
-          ultraFocus(pg,line-1);
-        } else if(pg>1){
-          e.preventDefault();
-          ultraFocus(pg-1,ULTRA_LINES);
-        }
+      } else if(e.key==='Backspace' && inp.selectionStart===0 && inp.selectionEnd===0){
+        const i=ultraIdx(pg,line); if(i<=0) return;
+        e.preventDefault(); clearTimeout(ultraTimer);
+        if(ultraChars(inp.value)>ULTRA_CHARS_PER_LINE) ultraFlow(inp,false);
+        const pos=ultraBackspaceAtStart(i); if(pos) ultraMoveCaret(pos,true);
+      } else if(e.key==='Delete' && inp.selectionStart===inp.selectionEnd && inp.selectionStart===inp.value.length){
+        const i=ultraIdx(pg,line); if(i+1>=ULTRA_TOTAL) return;
+        e.preventDefault(); clearTimeout(ultraTimer);
+        if(ultraChars(inp.value)>ULTRA_CHARS_PER_LINE){ ultraFlow(inp,false); return; }
+        const pos=ultraDeleteAtEnd(i); if(pos) ultraMoveCaret(pos,true);
       }
     });
   });
@@ -2359,6 +2519,7 @@ function downloadTemplate(){
 Ⅲ | 사안의 경우 | 사안포섭 | 공익성 / 비교형량 | 4
 Ⅳ | 설문의 해결 | 소결 | 결론 | 2
 핵심필수현출문구: 형성행위 · 재량행위 · 공익성
+금지표현: (선택) 이 표현이 나온 목차만 0점 — 예: 표현1 · 표현2 (쓰지 않으면 이 줄을 지우세요)
 
 ===
 
@@ -2876,7 +3037,7 @@ document.querySelectorAll('.mode-switch button').forEach(btn=>{
     document.getElementById('modeHint').textContent = currentMode==='advanced'
       ? '※ 상급자 모드에서는 목차가 제시되지 않습니다. 로마숫자 목차의 제목과 하위 목차(1·2·3)까지 직접 세워 작성하세요.'
       : currentMode==='ultra'
-        ? '※ 초상급자 모드는 목차·힌트 없이 실제 시험처럼 22줄 답안지 16페이지에 답안 전체를 직접 작성합니다.'
+        ? '※ 초상급자 모드는 목차·힌트 없이 실제 시험처럼 한 줄 '+ULTRA_CHARS_PER_LINE+'칸 · '+ULTRA_LINES+'줄 답안지 '+ULTRA_PAGES+'페이지에 답안 전체를 직접 작성합니다.'
         : '※ 초보자 모드에서는 제시된 목차를 따라 차근차근 답안을 작성합니다.';
     document.getElementById('structureEditBtn').style.display = currentMode==='ultra' ? 'none' : '';
     ultraPage=1;
@@ -2884,6 +3045,7 @@ document.querySelectorAll('.mode-switch button').forEach(btn=>{
     resetKwCheck();
     resetGridCheck();
     renderSteps();
+    applyUltraView();
   });
 });
 
@@ -3192,11 +3354,14 @@ const BAND_INFO={
 let gridState=null;
 
 function parseMatchGrid(text){
-  const out={rows:[],must:'',notes:[]};
+  const out={rows:[],must:'',notes:[],forbid:[]};
   String(text||'').split('\n').forEach(function(line){
     const l=line.trim(); if(!l) return;
     const mm=l.match(/^핵심필수현출문구\s*[:：|]\s*(.+)$/);
     if(mm){ out.must=mm[1].trim(); return; }
+    // r6: 금지표현 — 답안의 어느 목차에서 나오면 그 목차만 0점 (다른 목차는 정상 채점)
+    const fm=l.match(/^금지표현\s*[:：|]\s*(.+)$/);
+    if(fm){ out.forbid=fm[1].split(/\s*[\/,，]\s*|\s+·\s+/).map(function(x){return x.trim();}).filter(Boolean); return; }
     if(/^※/.test(l)){ out.notes.push(l); return; }
     const p=l.split('|').map(function(x){return x.trim();});
     if(p.length<3) return;
@@ -3221,43 +3386,151 @@ function _norm(s){
     .replace(/[\s·ㆍ‘’“”'"「」｢｣]/g,'').toLowerCase();
 }
 const _STOP=new Set(['사안','판례','여부','없음','아님','검토','문제','해결','결론','가능','경우','모두','예외','원칙','사유','인정','부정']);
+/* r6: "고의·과실"처럼 가운뎃점으로 묶인 말은 한 덩어리로 본다(따로따로 맞으면 부분점수만) */
 function _tokens(kw){
-  return String(kw||'').replace(/§/g,' §').split(/[\/→=,+~<>()\[\]·ㆍ\s]+|및|또는/)
-    .map(function(t){return t.trim();})
+  return String(kw||'').replace(/§/g,' §').split(/[\/→=,+~<>()\[\]\s]+|및|또는/)
+    .map(function(t){return t.replace(/^[·ㆍ]+|[·ㆍ]+$/g,'').trim();})
     .filter(function(t){return t.length>=2 && !_STOP.has(t) && !/^\d+(\.\d+)?$/.test(t);});
 }
 function _phrases(kw){
   const seen={};
-  return String(kw||'').replace(/§/g,' §').split(/[\/→=,+~<>()\[\]·ㆍ]|\s및\s|\s또는\s/)
+  return String(kw||'').replace(/§/g,' §').split(/[\/→=,+~<>()\[\]]|\s및\s|\s또는\s/)
     .map(function(t){return t.replace(/\s+/g,' ').trim();})
     .filter(function(t){ const n=_norm(t); if(t.length<2 || _STOP.has(t) || /^[\d.]+$/.test(t) || seen[n]) return false; seen[n]=1; return true; });
 }
-function _answerParts(){
-  const cfg=buildStepsConfig(currentMode);
-  const parts={}; let all='';
-  cfg.forEach(function(step,i){ const t=getStepText(i)||''; parts[step.roman]=(parts[step.roman]||'')+'\n'+t; all+='\n'+t; });
-  return {parts:parts, all:all};
+
+/* ── r6: 답안을 목차(로마숫자)별로 나누기 ──
+   초보자 모드: 첫 카드=Ⅰ, 가운데 카드의 #1·#2… 목차 = Ⅱ·Ⅲ…, 마지막 카드(설문의 해결)=채점표의 마지막 목차
+   상급자·초상급자 모드: 학습자가 쓴 "Ⅱ." 같은 로마숫자 제목을 기준으로 나눈다.
+   어느 목차인지 알 수 없는 부분은 roman='' 로 둔다. */
+const _ROM='ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ';
+function _romanOf(s){ const m=String(s||'').trim().match(/^([ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ])/); return m?m[1]:''; }
+function _splitByRoman(text, defRoman){
+  const out=[]; let cur={roman:defRoman||'', text:''};
+  String(text||'').split('\n').forEach(function(ln){
+    const m=ln.trim().match(/^([ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ])\s*[.．]/);
+    if(m){ if(cur.text.trim()) out.push(cur); cur={roman:m[1], text:ln+'\n'}; }
+    else cur.text+=ln+'\n';
+  });
+  if(cur.text.trim()) out.push(cur);
+  return out;
+}
+function _lastGridRoman(rows){
+  rows=rows||[];
+  const r=rows.slice().reverse().find(function(x){return /설문의\s*해결|결론/.test(x.name) && _romanOf(x.mok);});
+  if(r) return _romanOf(r.mok);
+  let best='', bi=-1;
+  rows.forEach(function(x){ const ro=_romanOf(x.mok), k=_ROM.indexOf(ro); if(k>bi){ bi=k; best=ro; } });
+  return best;
+}
+function _answerSections(rows){
+  const lastRoman=_lastGridRoman(rows);
+  const secs=[];
+  if(currentMode==='ultra'){
+    _splitByRoman(getUltraPlainText(),'').forEach(function(s){ secs.push(s); });
+    return secs;
+  }
+  const cfg=buildStepsConfig(currentMode), store=getAnswerStore();
+  cfg.forEach(function(step,i){
+    const first=(i===0), last=(i===cfg.length-1);
+    const def=first?'Ⅰ':(last?(lastRoman||step.roman):'');
+    const v=store[i];
+    if(currentMode==='beginner' && step.tabs && step.tabs.length && v && typeof v==='object'){
+      let k=0, hr='';
+      step.tabs.forEach(function(t,ti){
+        if(String(t).trim().startsWith('#')){ k++; hr=_romanOf(String(t).trim().slice(1)) || (_ROM[k]||''); return; }
+        const tv=v[ti]; if(!tv) return;
+        secs.push({roman: k ? hr : def, text:tv+'\n'});
+      });
+      return;
+    }
+    const title=currentMode==='advanced' ? String(store['t'+i]||'').trim() : '';
+    const body=!v?'':(typeof v==='string'?v:Object.values(v).filter(Boolean).join('\n'));
+    const text=(title?title+'\n':'')+body;
+    _splitByRoman(text, _romanOf(title)||def).forEach(function(s){ secs.push(s); });
+  });
+  return secs;
+}
+function _answerParts(rows){
+  const secs=_answerSections(rows);
+  const parts={}; let all='', unknown='';
+  secs.forEach(function(s){
+    all+='\n'+s.text;
+    if(s.roman) parts[s.roman]=(parts[s.roman]||'')+'\n'+s.text; else unknown+='\n'+s.text;
+  });
+  return {parts:parts, all:all, unknown:unknown, secs:secs};
+}
+/* 논증키워드 하나의 충족도(0~1): 제 목차 1 · 다른 목차 0.5 · 가운뎃점 묶음이 흩어져 있으면 부분 */
+function _tokHit(tok, own, all){
+  const n=_norm(tok);
+  if(own.indexOf(n)>=0) return 1;
+  if(all.indexOf(n)>=0) return 0.5;
+  const parts=tok.split(/[·ㆍ]/).map(function(x){return x.trim();}).filter(function(x){return x.length>=2;});
+  if(parts.length>1){
+    const o=parts.filter(function(p){return own.indexOf(_norm(p))>=0;}).length;
+    const a=parts.filter(function(p){return all.indexOf(_norm(p))>=0;}).length;
+    if(o===parts.length) return 0.8;
+    if(a===parts.length) return 0.4;
+    return 0.3*a/parts.length;
+  }
+  return 0;
 }
 function _suggest(row, ans){
   const toks=_tokens(row.kw||row.name);
   if(!toks.length) return {band:'t',ratio:0,hits:[],elsewhere:[],missing:[]};
-  const roman=(String(row.mok).match(/^[ⅠⅡⅢⅣⅤⅥⅦ]/)||[''])[0];
-  const own=_norm(roman && ans.parts[roman]!==undefined ? ans.parts[roman] : ans.all);
+  const roman=_romanOf(row.mok);
+  // 제 목차 글 + 목차를 알 수 없는 글을 "제자리"로 본다
+  const own=_norm(roman ? ((ans.parts[roman]||'')+ans.unknown) : ans.all);
   const all=_norm(ans.all);
-  let score=0; const hits=[], elsewhere=[], missing=[];
+  let score=0, wsum=0; const hits=[], elsewhere=[], missing=[];
   toks.forEach(function(t){
-    const n=_norm(t);
-    if(own.indexOf(n)>=0){ score+=1; hits.push(t); }
-    else if(all.indexOf(n)>=0){ score+=0.5; hits.push(t); }   // 다른 목차에 쓴 경우(배치 흐트러짐)
+    const w=Array.from(_norm(t)).length<=2 ? 0.5 : 1;   // 2글자 말은 어디서나 걸리기 쉬워 비중을 낮춘다
+    const h=_tokHit(t,own,all);
+    score+=w*h; wsum+=w;
+    if(h>0) hits.push(t);
   });
-  const ratio=score/toks.length;
-  // 처방 표시용: 논증키워드를 구절 단위로 나눠 빠진 구절·다른 목차에 쓴 구절을 찾는다
+  const ratio=wsum>0?score/wsum:0;
   _phrases(row.kw||row.name).forEach(function(ph){
     const n=_norm(ph);
     if(own.indexOf(n)>=0) return;
     if(all.indexOf(n)>=0) elsewhere.push(ph); else missing.push(ph);
   });
-  return {band: ratio>=0.6?'o':(ratio>=0.25?'t':'x'), ratio:ratio, hits:hits, elsewhere:elsewhere, missing:missing};
+  return {band: ratio>=0.7?'o':(ratio>=0.3?'t':'x'), ratio:ratio, hits:hits, elsewhere:elsewhere, missing:missing};
+}
+/* ── r6: 금지표현 찾기 ──
+   목차가 분명한 곳에서 나오면 그 목차의 채점표 줄을 모두 0점으로 고정(학습자가 바꿀 수 없음).
+   목차를 알 수 없는 곳에서 나오면 앞뒤 문장과 논증키워드가 가장 많이 겹치는 목차로 추정해 0점을 넣되, 학습자가 고칠 수 있게 둔다.
+   그래도 못 찾으면 경고만 띄운다. */
+function _detectForbidden(list, ans, rows){
+  const res=[];
+  (list||[]).forEach(function(expr){
+    const n=_norm(expr); if(!n) return;
+    const hit={expr:expr, romans:[], guessed:[], unresolved:false, found:false};
+    ans.secs.forEach(function(s){
+      if(_norm(s.text).indexOf(n)<0) return;
+      hit.found=true;
+      if(s.roman){ if(hit.romans.indexOf(s.roman)<0) hit.romans.push(s.roman); return; }
+      // 금지표현이 들어 있는 문단(빈 줄로 나뉜 덩어리)과 그 줄을 기준으로, 논증키워드가 가장 많이 겹치는 목차를 고른다
+      const paras=s.text.split(/\n[ \t]*\n/);
+      const para=paras.find(function(p){return _norm(p).indexOf(n)>=0;}) || s.text;
+      const line=para.split('\n').find(function(l){return _norm(l).indexOf(n)>=0;}) || para;
+      const pN=_norm(para), lN=_norm(line);
+      let best='', bestScore=0;
+      const byRoman={};
+      rows.forEach(function(r){
+        const ro=_romanOf(r.mok); if(!ro) return;
+        _tokens(r.kw||r.name).forEach(function(t){
+          const tn=_norm(t); if(tn===n) return;
+          byRoman[ro]=(byRoman[ro]||0)+(lN.indexOf(tn)>=0?2:0)+(pN.indexOf(tn)>=0?1:0);
+        });
+      });
+      Object.keys(byRoman).forEach(function(ro){ if(byRoman[ro]>bestScore){ bestScore=byRoman[ro]; best=ro; } });
+      if(best){ if(hit.romans.indexOf(best)<0 && hit.guessed.indexOf(best)<0) hit.guessed.push(best); }
+      else hit.unresolved=true;
+    });
+    if(hit.found) res.push(hit);
+  });
+  return res;
 }
 function _hlKw(kw,hits){
   let h=String(kw||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});
@@ -3271,16 +3544,31 @@ function _hlKw(kw,hits){
 function openGridCheck(sig, already){
   const rec=getCurrentProblem();
   const g=parseMatchGrid(rec.grid);
-  const ans=_answerParts();
+  const ans=_answerParts(g.rows);
   const prev=getGraded(rec.id);
   // 같은 답안을 다시 제출한 경우: 지난번에 고른 밴드·계수를 그대로 보여 주고 잠근다
   const restore=(already && prev && prev.lastSig===sig && prev.detail && prev.detail.type==='grid' && prev.detail.sel && prev.detail.sel.length===g.rows.length) ? prev.detail.sel : null;
-  gridState={rows:g.rows, sel:[], submitted:!!already, must:g.must, sig:sig||null};
+  gridState={rows:g.rows, sel:[], submitted:!!already, must:g.must, sig:sig||null, forbidHits:[]};
   g.rows.forEach(function(r,i){
     const s=_suggest(r,ans);
     const band=restore ? restore[i].band : s.band;
     const coef=restore ? restore[i].coef : BAND_INFO[s.band].def;
-    gridState.sel.push({band:band, coef:coef, auto:s.band, hits:s.hits, ratio:s.ratio, elsewhere:s.elsewhere, missing:s.missing});
+    gridState.sel.push({band:band, coef:coef, auto:s.band, hits:s.hits, ratio:s.ratio, elsewhere:s.elsewhere, missing:s.missing, forbid:[], forced:false, guessed:false});
+  });
+  // 금지표현: 해당 목차만 0점
+  const fh=_detectForbidden(g.forbid, ans, g.rows);
+  gridState.forbidHits=fh;
+  fh.forEach(function(h){
+    g.rows.forEach(function(r,i){
+      const ro=_romanOf(r.mok); if(!ro) return;
+      const sel=gridState.sel[i];
+      const strict=h.romans.indexOf(ro)>=0, guess=h.guessed.indexOf(ro)>=0;
+      if(!strict && !guess) return;
+      if(sel.forbid.indexOf(h.expr)<0) sel.forbid.push(h.expr);
+      if(strict){ sel.forced=true; sel.guessed=false; }
+      else if(!sel.forced) sel.guessed=true;
+      if(strict || !restore){ sel.band='x'; sel.coef=0; }
+    });
   });
   document.getElementById('kwCheckSection').style.display='none';
   const sec=document.getElementById('gridCheckSection');
@@ -3298,14 +3586,26 @@ function openGridCheck(sig, already){
     if(!ok) gridState.missing.push(k);
     return '<span class="gm '+(ok?'ok':'no')+'">'+(ok?'✓ ':'★ ')+k.replace(/</g,'&lt;')+'</span>';
   }).join('');
-  document.getElementById('gridMust').innerHTML = must.length
+  let html = must.length
     ? '<div class="gm-title">핵심필수현출문구 현출 확인 <span class="gc-sub">(답안 문구 기준 자동 확인 · ★ 표시는 미현출 — 절대누락 여부를 먼저 점검하세요)</span></div><div class="gm-list">'+chips+'</div>'
     : '';
+  if(g.forbid.length){
+    const fchips=g.forbid.map(function(k){
+      const h=fh.find(function(x){return x.expr===k;});
+      if(!h) return '<span class="gm ok">✓ '+_esc(k)+' 미사용</span>';
+      const where=h.romans.concat(h.guessed.map(function(r){return r+'(추정)';}));
+      if(where.length) return '<span class="gm no">⛔ '+_esc(k)+' — '+where.join('·')+' 0점</span>'+(h.unresolved?'<span class="gm warn">⚠ '+_esc(k)+' 위치 미확인 1곳</span>':'');
+      return '<span class="gm warn">⚠ '+_esc(k)+' — 위치 미확인 (해당 목차를 직접 ✕ ×0.00으로 고르세요)</span>';
+    }).join('');
+    html+='<div class="gm-title" style="margin-top:10px;">금지표현 점검 <span class="gc-sub">(금지표현이 나온 목차만 0점 · 다른 목차는 그대로 채점)</span></div><div class="gm-list">'+fchips+'</div>';
+  }
+  document.getElementById('gridMust').innerHTML=html;
   document.getElementById('gridNote').textContent=g.notes.join(' ');
   sec.style.display='';
   updateGridTotal();
   sec.scrollIntoView({behavior:'smooth',block:'start'});
   if(already){ showStoredScore(prev); toast(ALREADY_MSG); }
+  else if(fh.length) toast('금지표현이 나온 목차는 0점 처리했습니다. 나머지 목차의 밴드를 확인해 점수를 반영하세요');
   else toast('매칭채점표로 목차별 밴드를 확인한 뒤 점수를 반영해주세요');
 }
 function renderGridRows(){
@@ -3313,27 +3613,31 @@ function renderGridRows(){
   box.innerHTML=gridState.rows.map(function(r,i){
     const s=gridState.sel[i];
     const opts=BAND_INFO[s.band].coefs.map(function(c){return '<option value="'+c+'"'+(Math.abs(c-s.coef)<1e-9?' selected':'')+'>×'+c.toFixed(2)+'</option>';}).join('');
-    return '<div class="gc-row'+(gridState.submitted?' locked':'')+'" data-i="'+i+'">'+
+    const fnote = s.forbid && s.forbid.length
+      ? '<div class="gc-forbid">⛔ 금지표현 「'+s.forbid.map(_esc).join('」「')+'」 — 이 목차는 0점'+(s.forced?'':' <span class="gc-sub">(위치 추정 · 이 목차가 아니면 밴드를 직접 고치세요)</span>')+'</div>' : '';
+    return '<div class="gc-row'+((gridState.submitted||s.forced)?' locked':'')+(s.forbid&&s.forbid.length?' forbid':'')+'" data-i="'+i+'">'+
       '<div class="gc-mok">'+r.mok+'</div>'+
       '<div><div class="gc-name">'+r.name.replace(/</g,'&lt;')+(r.tag?'<span class="gc-tag">'+r.tag.replace(/</g,'&lt;')+'</span>':'')+'<span class="gc-pts">배점 '+fmtPts(r.pts)+'</span></div>'+
-        (r.kw?'<div class="gc-kw">'+_hlKw(r.kw,s.hits)+'</div>':'')+'</div>'+
+        (r.kw?'<div class="gc-kw">'+_hlKw(r.kw,s.hits)+'</div>':'')+fnote+'</div>'+
       '<div class="gc-ctrl">'+
         '<div class="gc-bands">'+['o','t','x'].map(function(b){return '<button class="'+b+(s.band===b?' on':'')+'" data-b="'+b+'" title="'+BAND_INFO[b].label+'">'+BAND_INFO[b].mark+'</button>';}).join('')+'</div>'+
         '<select class="gc-coef">'+opts+'</select>'+
         '<div class="gc-earn">'+fmtPts(r.pts*s.coef)+' / '+fmtPts(r.pts)+'</div>'+
-        '<div class="gc-auto">자동 추천 '+BAND_INFO[s.auto].mark+'</div>'+
+        '<div class="gc-auto">'+(s.forced?'금지표현 0점':'자동 추천 '+BAND_INFO[s.auto].mark)+'</div>'+
       '</div></div>';
   }).join('');
 }
 document.addEventListener('click',function(e){
   const b=e.target.closest('#gridRows .gc-bands button'); if(!b || !gridState || gridState.submitted) return;
   const i=+b.closest('.gc-row').dataset.i;
+  if(gridState.sel[i].forced){ toast('금지표현이 나온 목차라 점수를 줄 수 없습니다'); return; }
   gridState.sel[i].band=b.dataset.b; gridState.sel[i].coef=BAND_INFO[b.dataset.b].def;
   renderGridRows(); updateGridTotal();
 });
 document.addEventListener('change',function(e){
   if(!e.target.matches('#gridRows .gc-coef') || !gridState || gridState.submitted) return;
   const i=+e.target.closest('.gc-row').dataset.i;
+  if(gridState.sel[i].forced){ renderGridRows(); return; }
   gridState.sel[i].coef=parseFloat(e.target.value);
   renderGridRows(); updateGridTotal();
 });
@@ -3401,11 +3705,12 @@ function renderLeftGrid(){
   const rows=g.rows.map(function(r,i){
     total+=r.pts;
     let mark='', got='';
-    if(done){ const s=gridState.sel[i]; earned+=r.pts*s.coef; mark='<span class="lg-b '+s.band+'">'+BAND_INFO[s.band].mark+'</span>'; got=fmtPts(r.pts*s.coef)+'/'; }
+    if(done){ const s=gridState.sel[i]; earned+=r.pts*s.coef; mark=(s.forbid&&s.forbid.length?'⛔':'')+'<span class="lg-b '+s.band+'">'+BAND_INFO[s.band].mark+'</span>'; got=fmtPts(r.pts*s.coef)+'/'; }
     return '<tr><td class="lg-mok">'+_esc(r.mok)+'</td><td>'+_esc(r.name)+(r.tag?' <span class="lg-tag">'+_esc(r.tag)+'</span>':'')+'</td><td class="lg-pts">'+mark+got+fmtPts(r.pts)+'</td></tr>';
   }).join('');
   box.innerHTML=(draft?'<div class="lg-draft">자동 추천 밴드 기준 · 점수 반영 전</div>':'')+'<table class="lg-table"><tbody>'+rows+'</tbody><tfoot><tr><td colspan="2">계</td><td class="lg-pts">'+(done?fmtPts(earned)+'/':'')+fmtPts(total)+'</td></tr></tfoot></table>'+
-    (g.must?'<div class="lg-must"><b>핵심필수현출문구</b> '+_esc(g.must)+'</div>':'');
+    (g.must?'<div class="lg-must"><b>핵심필수현출문구</b> '+_esc(g.must)+'</div>':'')+
+    (g.forbid.length?'<div class="lg-must"><b>금지표현</b> '+_esc(g.forbid.join(' · '))+' <span style="color:var(--muted);">(나온 목차만 0점)</span></div>':'');
 }
 /* ================= 재작성처방 (매칭채점표 기반 자동 생성) =================
    ★ 절대누락 → 판례문구 단위 → 사안포섭문구 단위 → 목차 단위 → 문제 전체 단위 순으로
@@ -3415,19 +3720,26 @@ function _rxUnit(tag){
   if(tag==='사안포섭') return 'fact';
   return 'mok';
 }
-const _RX_UNIT_ORDER=['star','case','fact','mok','all'];
-const _RX_UNIT_HEAD={star:'★ 절대누락',case:'판례문구 단위',fact:'사안포섭문구 단위',mok:'목차 단위',all:'문제 전체 단위'};
+const _RX_UNIT_ORDER=['forbid','star','case','fact','mok','all'];
+const _RX_UNIT_HEAD={forbid:'⛔ 금지표현',star:'★ 절대누락',case:'판례문구 단위',fact:'사안포섭문구 단위',mok:'목차 단위',all:'문제 전체 단위'};
 function buildRewriteItems(){
   const out=[];
   if(gridState){
     const rows=gridState.rows, sel=gridState.sel;
+    (gridState.forbidHits||[]).forEach(function(h){
+      const where=h.romans.concat(h.guessed);
+      const lost=rows.reduce(function(sum,r,i){ return sum+((sel[i].forbid||[]).indexOf(h.expr)>=0 ? r.pts : 0); },0);
+      out.push({unit:'forbid', head:_RX_UNIT_HEAD.forbid,
+        text:'「'+h.expr+'」를 '+(where.length?where.join('·')+' 목차에서 ':'답안에서 ')+'지우고, 그 자리를 해당 목차의 법리 문구로 다시 쓰세요. 이 표현 하나로 '+(where.length?'그 목차 배점 '+fmtPts(lost)+'점이 모두 빠졌습니다.':'점수가 깎일 수 있습니다.'),
+        loss:lost});
+    });
     if(gridState.missing && gridState.missing.length){
       out.push({unit:'star', head:_RX_UNIT_HEAD.star, text:'다음 핵심필수현출문구를 답안에 그대로 현출하세요: '+gridState.missing.join(' · '), loss:0});
     }
     const items=[];
     rows.forEach(function(r,i){
       const s=sel[i];
-      if(s.band==='o') return;
+      if(s.band==='o' || (s.forbid && s.forbid.length)) return;   // 금지표현 목차는 ⛔ 항목에서 따로 처방
       const u=_rxUnit(r.tag);
       let text;
       if(u==='case'){
@@ -3542,6 +3854,8 @@ function buildAdvice(){
   }
   if(rows.some(function(r,i){return sel[i].elsewhere && sel[i].elsewhere.length;}))
     sentences.push('논증키워드가 제자리가 아닌 목차에 쓰인 곳이 있습니다. 목차 배열을 매칭채점표 순서에 맞추세요.');
+  if(gridState.forbidHits && gridState.forbidHits.length)
+    sentences.push('금지표현이 쓰인 목차는 논증이 맞아도 점수가 없습니다. 그 표현만 빼고 법리 문구로 바꾸면 해당 목차의 점수를 되찾을 수 있습니다.');
   if(gridState.missing && gridState.missing.length)
     sentences.push('핵심필수현출문구 가운데 답안에 나오지 않은 것이 있습니다. 절대누락부터 채우세요.');
   if(pct<71) sentences.push('재작성처방의 위쪽 항목부터 고치면 다음 스테이지 기준(71점)에 가까워집니다.');
@@ -3690,7 +4004,7 @@ document.getElementById('exportBtn').addEventListener('click',()=>{
     lines.push('----- 매칭채점표 채점 결과 -----');
     gridState.rows.forEach(function(r,i){
       const s=gridState.sel[i];
-      lines.push(r.mok+' '+r.name+(r.tag?'〔'+r.tag+'〕':'')+' — '+BAND_INFO[s.band].mark+' 계수 '+s.coef.toFixed(2)+' × 배점 '+fmtPts(r.pts)+' = '+fmtPts(r.pts*s.coef)+'점');
+      lines.push(r.mok+' '+r.name+(r.tag?'〔'+r.tag+'〕':'')+' — '+BAND_INFO[s.band].mark+' 계수 '+s.coef.toFixed(2)+' × 배점 '+fmtPts(r.pts)+' = '+fmtPts(r.pts*s.coef)+'점'+(s.forbid&&s.forbid.length?' ⛔금지표현「'+s.forbid.join('」「')+'」':''));
     });
     lines.push('예상득점: '+fmtPts(gridState.earned)+' / '+fmtPts(gridState.total)+'점 (매칭율 '+gridState.pct+'%)');
     if(gridState.missing && gridState.missing.length) lines.push('핵심필수현출문구 미현출: '+gridState.missing.join(' · '));
@@ -3714,7 +4028,8 @@ document.getElementById('exportBtn').addEventListener('click',()=>{
   lines.push('');
   if(currentMode==='ultra'){
     const used=ultraGetAll().reduce((n,v,i)=>v?i+1:n,0);
-    lines.push('----- 작성 답안 (초상급자 실전답안 · 사용 '+used+'줄 / 352줄) -----');
+    const tgt=ultraTargetLines();
+    lines.push('----- 작성 답안 (초상급자 실전답안 · 한 줄 '+ULTRA_CHARS_PER_LINE+'칸 · 사용 '+used+'줄 / '+ULTRA_TOTAL+'줄'+(tgt?' · 목표 약 '+tgt+'줄':'')+') -----');
     lines.push(getUltraExportText());
   } else {
     lines.push('----- 작성 답안 -----');
@@ -4494,6 +4809,7 @@ body.case-fold .field-box[data-field="case"]{--case-mh:260px;}
     window.addEventListener('mouseup',up); window.addEventListener('touchend',up);
   }
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && readerMode) closeReader(); });
+  window.h2pOpenCaseReader=openReader;   // 초상급자 「전체」 보기에서 사례를 옆에 띄우기 위해 공개
 
   function init(){
     buildTools(); applyLeft();
