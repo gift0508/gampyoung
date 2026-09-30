@@ -687,7 +687,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <header>
   <div class="brand">
     <div class="brand-line">
-      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r19">1행2필</span>
+      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r20">1행2필</span>
       <span class="domain-badge" id="domainBadge">감평사 보상법규</span>
       <span class="brand-desc">사례형 답안 학습엔진</span>
       <span class="step-admin-gear" id="domainEditBtn" title="학습영역 설정">⚙</span>
@@ -928,7 +928,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <!-- ADMIN CONSOLE -->
 <div class="admin-console" id="adminConsole">
   <div class="admin-head">
-    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r19</span></div>
+    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r20</span></div>
     <button class="hbtn danger" id="adminClose">모드 종료 ✕</button>
   </div>
   <div class="admin-tabs">
@@ -3565,6 +3565,23 @@ function _lastGridRoman(rows){
   rows.forEach(function(x){ const ro=_romanOf(x.mok), k=_ROM.indexOf(ro); if(k>bi){ bi=k; best=ro; } });
   return best;
 }
+/* r20: 초보자 모드에서는 목차 제목이 화면에 주어져 학습자 글에 들어가지 않는다.
+   초상급자·상급자 모드에서 학습자가 직접 쓰는 것과 같은 모양이 되도록, 채점할 때 칸마다 그 제목 줄을 붙인다.
+   제목 글자는 해설의 같은 목차 제목(없으면 화면의 목차 이름)을 쓴다. */
+function _headingFor(mok, label){
+  const lbl=String(label||'').replace(/…$/,'').replace(/^#?\s*/,'').replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,'').trim();
+  let title=lbl;
+  if(_modelCtx && _modelCtx.pieces){
+    const k=_mokKey(mok);
+    const pc=_modelCtx.pieces.find(function(p){ return _mokKey(p.mok)===k; });
+    if(pc && pc.title) title=pc.title;
+  }
+  if(!title) return '';
+  const mP=String(mok).match(/\((\d+)\)$/), mN=String(mok).match(/-(\d+)$/);
+  if(mP) return '('+mP[1]+') '+title;
+  if(mN) return mN[1]+'. '+title;
+  return mok+'. '+title;
+}
 function _answerSections(rows){
   const lastRoman=_lastGridRoman(rows);
   const secs=[];
@@ -3580,21 +3597,29 @@ function _answerSections(rows){
     if(currentMode==='beginner' && step.tabs && step.tabs.length && v && typeof v==='object'){
       // 카드가 여러 개(로마숫자마다 카드)면 카드의 로마숫자를 그대로 쓰고,
       // 옛 방식(카드 하나에 #1·#2 머리글로 쟁점을 나눔)이면 머리글 순서를 Ⅱ·Ⅲ…에 대응시킨다
-      const legacy = (cfg.length===3) && step.tabs.some(function(t){return String(t).trim().startsWith('#');}) && !step.tabs.some(function(t){return _romanOf(String(t).trim().slice(1));});
-      let k=0, hr='';
+      // 옛 방식 = 「쟁점 검토」 카드 하나에 여러 쟁점을 #1·#2로 넣은 구조 (r12 이전 자동 도출 · 기본 목차)
+      const legacy = String(step.label||'').trim()==='쟁점 검토' && step.tabs.some(function(t){return String(t).trim().startsWith('#');}) && !step.tabs.some(function(t){return _romanOf(String(t).trim().slice(1));});
+      let k=0, hr='', hLabel='';
+      const saidCard={}, saidHead={};
       step.tabs.forEach(function(t,ti){
         const ts=String(t).trim();
-        if(ts.startsWith('#')){ k++; const mh=ts.slice(1).match(/^(\d+)/); if(mh) k=+mh[1]; hr=_romanOf(ts.slice(1)) || (legacy ? (_ROM[k]||'') : step.roman); return; }
+        if(ts.startsWith('#')){ k++; const mh=ts.slice(1).match(/^(\d+)/); if(mh) k=+mh[1]; hr=_romanOf(ts.slice(1)) || (legacy ? (_ROM[k]||'') : step.roman); hLabel=ts.slice(1); return; }
         const tv=v[ti]; if(!tv) return;
         const roman = k ? hr : (legacy ? def : step.roman);
         let mok=roman; const mP=ts.match(/^[(（](\d+)[)）]/), mN=ts.match(/^(\d+)\s*[.．]/);
-        if(mP) mok=roman+(k?'-'+k:'')+'('+mP[1]+')'; else if(mN) mok=roman+'-'+mN[1];
-        secs.push({roman:roman, mok:mok, label:ts.replace(/^#/,''), text:tv+'\n'});
+        // 하위 목차가 한 단계뿐인 문제(Ⅲ → 1. 학설)는 탭이 "(1) 학설"로 보이지만 해설·채점표에서는 Ⅲ-1이다
+        if(mP) mok = k ? roman+'-'+k+'('+mP[1]+')' : roman+'-'+mP[1]; else if(mN) mok=roman+'-'+mN[1];
+        // 제목 줄: 카드 제목(Ⅱ. …)과 머리글(1. …)은 초상급자 모드처럼 각자의 조각으로, 탭 제목((1) …)은 그 탭 글 머리에
+        if(!legacy && !saidCard[roman]){ saidCard[roman]=1; const h=_headingFor(roman, step.label); if(h) secs.push({roman:roman, mok:roman, label:'', text:h+'\n'}); }
+        if(k && !mN && !saidHead[roman+'-'+k]){ saidHead[roman+'-'+k]=1; const h=_headingFor(roman+'-'+k, hLabel); if(h) secs.push({roman:roman, mok:roman+'-'+k, label:'', text:h+'\n'}); }
+        const h2=(mok!==roman) ? _headingFor(mok, ts) : '';
+        secs.push({roman:roman, mok:mok, label:ts.replace(/^#/,''), text:(h2?h2+'\n':'')+tv+'\n'});
       });
       return;
     }
-    const title=currentMode==='advanced' ? String(store['t'+i]||'').trim() : '';
+    let title=currentMode==='advanced' ? String(store['t'+i]||'').trim() : '';
     const body=!v?'':(typeof v==='string'?v:Object.values(v).filter(Boolean).join('\n'));
+    if(currentMode==='beginner' && body.trim() && !_romanOf(body.trim())){ title=_headingFor(def, step.label); }   // 초보자: 카드 제목 줄(Ⅰ. 문제의 소재 / Ⅳ. 설문의 해결)을 붙인다
     const text=(title?title+'\n':'')+body;
     _splitByRoman(text, _romanOf(title)||def).forEach(function(s){ secs.push(s); });
   });
@@ -4182,7 +4207,7 @@ function renderReview(){
   rv.pieces.forEach(function(p,i){
     const txt=String(p.text||'').replace(/\n+$/,'');
     if(txt.trim()){
-      html+='<div class="rv-piece">'+(currentMode==='beginner' && p.mok ? '<div class="rv-cap">'+_esc(p.mok)+(p.label?' '+_esc(String(p.label).replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,'')):'')+'</div>' : '')+
+      html+='<div class="rv-piece">'+(false ? '<div class="rv-cap">'+_esc(p.mok)+(p.label?' '+_esc(String(p.label).replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,'')):'')+'</div>' : '')+
         '<div class="rv-text">'+(forbidExprs.length?_markForbid(txt,forbidExprs):_esc(txt).replace(/\n/g,'<br>'))+'</div></div>';
     }
     rv.byIdx[i].forEach(function(it){ html+=_reviewBlock(it); });
@@ -4218,7 +4243,7 @@ function reviewText(){
   rv.first.forEach(function(it){ L.push('  ┌ '+it.head+' · '+it.row.name+' · 처방 '+it.n); if(it.model) String(it.model).split('\n').forEach(function(l){ L.push('  │ '+l); }); L.push('  └ 모범답안 '+it.row.mok); });
   rv.pieces.forEach(function(p,i){
     const txt=String(p.text||'').replace(/\n+$/,'');
-    if(txt.trim()){ if(currentMode==='beginner' && p.mok) L.push('['+p.mok+(p.label?' '+String(p.label).replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,''):'')+']'); L.push(txt); }
+    if(txt.trim()){ if(false) L.push('['+p.mok+(p.label?' '+String(p.label).replace(/^[(（]\d+[)）]\s*|^\d+\s*[.．]\s*/,''):'')+']'); L.push(txt); }
     rv.byIdx[i].forEach(function(it){
       L.push('  ┌ '+(it.type==='ins'?'➕ 신설':(it.type==='fix'?'✎ 교정 참고':'⛔ 삭제'))+' · '+it.row.name+' · 처방 '+it.n);
       if(it.type!=='ins') L.push('  │ '+String(it.text).replace(/\n/g,' / '));
