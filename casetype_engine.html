@@ -687,7 +687,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <header>
   <div class="brand">
     <div class="brand-line">
-      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r21">1행2필</span>
+      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r23">1행2필</span>
       <span class="domain-badge" id="domainBadge">감평사 보상법규</span>
       <span class="brand-desc">사례형 답안 학습엔진</span>
       <span class="step-admin-gear" id="domainEditBtn" title="학습영역 설정">⚙</span>
@@ -928,7 +928,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <!-- ADMIN CONSOLE -->
 <div class="admin-console" id="adminConsole">
   <div class="admin-head">
-    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r21</span></div>
+    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r23</span></div>
     <button class="hbtn danger" id="adminClose">모드 종료 ✕</button>
   </div>
   <div class="admin-tabs">
@@ -3262,7 +3262,7 @@ function answerSig(){
 }
 /* r21: 채점 기준 버전. 채점 방식을 바꿀 때마다 올린다.
    기록의 버전이 다르면 옛 기록(밴드·계수·점수)을 다시 쓰지 않고 새 기준으로 채점한다. 스테이지·풀이 횟수는 그대로 둔다. */
-const SCORING_VER='r21';
+const SCORING_VER='r23';
 function isAlreadyGraded(sig){
   const g=getGraded(curId());
   return !!(g && g.ver===SCORING_VER && Array.isArray(g.sigs) && g.sigs.indexOf(sig)>=0);
@@ -3586,6 +3586,72 @@ function _headingFor(mok, label){
   if(mN) return mN[1]+'. '+title;
   return mok+'. '+title;
 }
+/* 초보자 모드 → 한 편의 답안 글.
+   카드 제목(Ⅱ. …) · 머리글(1. …) · 탭 제목((1) …)을 해설의 목차 제목으로 넣되, 학습자가 칸 첫머리에 같은 번호의 제목을 이미 썼으면 넣지 않는다. */
+const _HEAD_RE=/^\s*([ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ])\s*[.．]|^\s*(\d{1,2})\s*[.．](?!\d)|^\s*[(（](\d{1,2})[)）]/;
+function _markerOf(line){
+  const m=String(line||'').match(_HEAD_RE); if(!m) return '';
+  return m[1] ? 'R'+m[1] : (m[2] ? 'N'+m[2] : 'P'+m[3]);
+}
+function _leadingMarkers(text){
+  const out=[];
+  for(const ln of String(text||'').split('\n')){
+    if(!ln.trim()) continue;
+    const mk=_markerOf(ln); if(!mk) break;
+    out.push(mk);
+  }
+  return out;
+}
+function beginnerDocument(rows){
+  const lastRoman=_lastGridRoman(rows);
+  const cfg=buildStepsConfig('beginner'), store=(answers[curId()]&&answers[curId()].beginner)||{};
+  const out=[];
+  function emit(heading, body){
+    // heading: 넣을 제목(없으면 ''), body: 학습자 글
+    const b=String(body||'').replace(/\s+$/,'');
+    if(heading){
+      const lead=_leadingMarkers(b), isRoman=_markerOf(heading).charAt(0)==='R';
+      // 로마숫자 제목은 학습자가 로마숫자 제목을 썼을 때만, 소제목은 학습자가 칸 첫머리에 어떤 제목이든 썼을 때 넣지 않는다
+      const skip = isRoman ? lead.some(function(x){return x.charAt(0)==='R';}) : lead.length>0;
+      if(!skip) out.push(heading);
+    }
+    if(b.trim()) out.push(b);
+  }
+  cfg.forEach(function(step,i){
+    const first=(i===0), last=(i===cfg.length-1);
+    const roman=first?'Ⅰ':(last?(lastRoman||step.roman):step.roman);
+    const v=store[i];
+    if(step.tabs && step.tabs.length && v && typeof v==='object'){
+      const legacy = String(step.label||'').trim()==='쟁점 검토' && step.tabs.some(function(t){return String(t).trim().startsWith('#');});
+      const any=Object.keys(v).some(function(k){return String(v[k]||'').trim();});
+      if(!any) return;
+      let cardSaid=false, k=0, hLabel='', headSaid={}, curRoman=roman;
+      // 카드 안의 첫 글 (학습자가 카드 제목을 직접 썼는지 보려고)
+      const firstBody=(function(){ for(let ti=0;ti<step.tabs.length;ti++){ if(!String(step.tabs[ti]).trim().startsWith('#') && String(v[ti]||'').trim()) return v[ti]; } return ''; })();
+      step.tabs.forEach(function(t,ti){
+        const ts=String(t).trim();
+        if(ts.startsWith('#')){ k++; const mh=ts.slice(1).match(/^(\d+)/); if(mh) k=+mh[1]; hLabel=ts.slice(1); if(legacy){ curRoman=_ROM[k]||roman; cardSaid=false; } return; }
+        const body=String(v[ti]||''); if(!body.trim()) return;
+        const lead=_leadingMarkers(body);
+        if(!legacy && !cardSaid){ cardSaid=true; const h=_headingFor(roman, step.label); if(h && _leadingMarkers(firstBody).indexOf('R'+roman)<0 && lead.indexOf('R'+roman)<0) out.push(h); }
+        if(legacy && !cardSaid){ cardSaid=true; const h=_headingFor(curRoman, hLabel); if(h && lead.indexOf('R'+curRoman)<0) out.push(h); }
+        const mP=ts.match(/^[(（](\d+)[)）]/), mN=ts.match(/^(\d+)\s*[.．]/);
+        let mok;
+        if(legacy) mok = mP ? curRoman+'-'+mP[1] : (mN ? curRoman+'-'+mN[1] : curRoman);
+        else if(mP) mok = k ? roman+'-'+k+'('+mP[1]+')' : roman+'-'+mP[1];
+        else if(mN) mok = roman+'-'+mN[1];
+        else mok = roman;
+        if(!legacy && k && !mN && !headSaid[k]){ headSaid[k]=1; const h=_headingFor(roman+'-'+k, hLabel); if(h && !lead.some(function(x){return x.charAt(0)!=='P';})) out.push(h); }
+        emit(mok!==roman && mok!==curRoman ? _headingFor(mok, ts) : '', body);
+      });
+      return;
+    }
+    const body=!v?'':(typeof v==='string'?v:Object.values(v).filter(Boolean).join('\n'));
+    if(!body.trim()) return;
+    emit(_headingFor(roman, step.label), body);
+  });
+  return out.join('\n');
+}
 function _answerSections(rows){
   const lastRoman=_lastGridRoman(rows);
   const secs=[];
@@ -3593,34 +3659,16 @@ function _answerSections(rows){
     _splitByRoman(getUltraPlainText(),'').forEach(function(s){ secs.push(s); });
     return secs;
   }
+  if(currentMode==='beginner'){
+    // r22: 초보자 모드 답안을 목차 순서대로 한 편의 답안으로 이어 붙여, 초상급자와 똑같은 경로로 채점한다
+    _splitByRoman(beginnerDocument(rows),'').forEach(function(s){ secs.push(s); });
+    return secs;
+  }
   const cfg=buildStepsConfig(currentMode), store=getAnswerStore();
   cfg.forEach(function(step,i){
     const first=(i===0), last=(i===cfg.length-1);
     const def=first?'Ⅰ':(last?(lastRoman||step.roman):step.roman);   // 카드 위치 = 로마숫자 (학습자가 쓴 'Ⅲ.' 제목이 있으면 그것이 우선)
     const v=store[i];
-    if(currentMode==='beginner' && step.tabs && step.tabs.length && v && typeof v==='object'){
-      // 카드가 여러 개(로마숫자마다 카드)면 카드의 로마숫자를 그대로 쓰고,
-      // 옛 방식(카드 하나에 #1·#2 머리글로 쟁점을 나눔)이면 머리글 순서를 Ⅱ·Ⅲ…에 대응시킨다
-      // 옛 방식 = 「쟁점 검토」 카드 하나에 여러 쟁점을 #1·#2로 넣은 구조 (r12 이전 자동 도출 · 기본 목차)
-      const legacy = String(step.label||'').trim()==='쟁점 검토' && step.tabs.some(function(t){return String(t).trim().startsWith('#');}) && !step.tabs.some(function(t){return _romanOf(String(t).trim().slice(1));});
-      let k=0, hr='', hLabel='';
-      const saidCard={}, saidHead={};
-      step.tabs.forEach(function(t,ti){
-        const ts=String(t).trim();
-        if(ts.startsWith('#')){ k++; const mh=ts.slice(1).match(/^(\d+)/); if(mh) k=+mh[1]; hr=_romanOf(ts.slice(1)) || (legacy ? (_ROM[k]||'') : step.roman); hLabel=ts.slice(1); return; }
-        const tv=v[ti]; if(!tv) return;
-        const roman = k ? hr : (legacy ? def : step.roman);
-        let mok=roman; const mP=ts.match(/^[(（](\d+)[)）]/), mN=ts.match(/^(\d+)\s*[.．]/);
-        // 하위 목차가 한 단계뿐인 문제(Ⅲ → 1. 학설)는 탭이 "(1) 학설"로 보이지만 해설·채점표에서는 Ⅲ-1이다
-        if(mP) mok = k ? roman+'-'+k+'('+mP[1]+')' : roman+'-'+mP[1]; else if(mN) mok=roman+'-'+mN[1];
-        // 제목 줄: 카드 제목(Ⅱ. …)과 머리글(1. …)은 초상급자 모드처럼 각자의 조각으로, 탭 제목((1) …)은 그 탭 글 머리에
-        if(!legacy && !saidCard[roman]){ saidCard[roman]=1; const h=_headingFor(roman, step.label); if(h) secs.push({roman:roman, mok:roman, label:'', text:h+'\n'}); }
-        if(k && !mN && !saidHead[roman+'-'+k]){ saidHead[roman+'-'+k]=1; const h=_headingFor(roman+'-'+k, hLabel); if(h) secs.push({roman:roman, mok:roman+'-'+k, label:'', text:h+'\n'}); }
-        const h2=(mok!==roman) ? _headingFor(mok, ts) : '';
-        secs.push({roman:roman, mok:mok, label:ts.replace(/^#/,''), text:(h2?h2+'\n':'')+tv+'\n'});
-      });
-      return;
-    }
     let title=currentMode==='advanced' ? String(store['t'+i]||'').trim() : '';
     const body=!v?'':(typeof v==='string'?v:Object.values(v).filter(Boolean).join('\n'));
     if(currentMode==='beginner' && body.trim() && !_romanOf(body.trim())){ title=_headingFor(def, step.label); }   // 초보자: 카드 제목 줄(Ⅰ. 문제의 소재 / Ⅳ. 설문의 해결)을 붙인다
@@ -3693,9 +3741,15 @@ function _suggest(row, ans){
   const toks=_tokens(row.kw||row.name);
   const roman=_romanOf(row.mok);
   const k=_mokKey(row.mok);
+  /* r23: 비교 범위 = 한 단계 위 목차 전체.
+     Ⅱ-1(1) 줄은 학습자의 "1." 부분 전체(Ⅱ-1 + Ⅱ-1(1)·(2))와, Ⅲ-2 줄은 Ⅲ 전체와 비교한다.
+     초보자 화면이 가장 작은 단위((1) 판례 / (2) 사안의 경우)를 탭으로 나눠 주기 때문에,
+     글을 탭에 어떻게 나눠 넣었는지 · 초상급자에서 그 소제목을 썼는지에 따라 점수가 달라지지 않게 한다.
+     기준 문구는 여전히 해설의 그 줄 문구다. */
+  const scope = (/\(\d+\)$/.test(k) ? k.replace(/\(\d+\)$/,'') : (/-\d+$/.test(k) ? k.replace(/-\d+$/,'') : k));
   let ownRaw='';
-  if(ans.byMok){ // 그 목차 조각 + 하위 조각들(Ⅱ-1 → Ⅱ-1(1), Ⅱ-1(2))을 합친다
-    Object.keys(ans.byMok).forEach(function(x){ if(x===k || ((x.indexOf(k)===0) && /^[-(]/.test(x.slice(k.length)))) ownRaw+='\n'+ans.byMok[x]; });
+  if(ans.byMok){
+    Object.keys(ans.byMok).forEach(function(x){ if(x===scope || ((x.indexOf(scope)===0) && /^[-(]/.test(x.slice(scope.length)))) ownRaw+='\n'+ans.byMok[x]; });
   }
   const own=_norm(ownRaw ? ownRaw+ans.unknown : (roman ? ((ans.parts[roman]||'')+ans.unknown) : ans.all));
   const all=_norm(ans.all);
