@@ -687,7 +687,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <header>
   <div class="brand">
     <div class="brand-line">
-      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r20">1행2필</span>
+      <span class="brand-name" title="1행2필 사례형 답안 학습엔진 · build r21">1행2필</span>
       <span class="domain-badge" id="domainBadge">감평사 보상법규</span>
       <span class="brand-desc">사례형 답안 학습엔진</span>
       <span class="step-admin-gear" id="domainEditBtn" title="학습영역 설정">⚙</span>
@@ -928,7 +928,7 @@ table.admin-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.0
 <!-- ADMIN CONSOLE -->
 <div class="admin-console" id="adminConsole">
   <div class="admin-head">
-    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r20</span></div>
+    <div class="title">🔒 관리자 전용 마스터 관리 콘솔<span style="font-weight:500;font-size:11.5px;color:#8792b5;letter-spacing:.4px;">build r21</span></div>
     <button class="hbtn danger" id="adminClose">모드 종료 ✕</button>
   </div>
   <div class="admin-tabs">
@@ -3260,9 +3260,12 @@ function answerSig(){
   cfg.forEach((_,i)=>{ t+=String(getStepText(i)||'').replace(/\s+/g,' ').trim()+'\u0001'; });
   return _hashStr(t);
 }
+/* r21: 채점 기준 버전. 채점 방식을 바꿀 때마다 올린다.
+   기록의 버전이 다르면 옛 기록(밴드·계수·점수)을 다시 쓰지 않고 새 기준으로 채점한다. 스테이지·풀이 횟수는 그대로 둔다. */
+const SCORING_VER='r21';
 function isAlreadyGraded(sig){
   const g=getGraded(curId());
-  return !!(g && Array.isArray(g.sigs) && g.sigs.indexOf(sig)>=0);
+  return !!(g && g.ver===SCORING_VER && Array.isArray(g.sigs) && g.sigs.indexOf(sig)>=0);
 }
 function revealResultFields(){
   document.querySelectorAll('.field-box.blurred').forEach(el=>{ el.classList.remove('blurred'); el.classList.add('revealed'); });
@@ -3322,7 +3325,7 @@ document.getElementById('submitBtn').addEventListener('click',()=>{
   const section = document.getElementById('kwCheckSection');
   const kwList = document.getElementById('kwList');
   const g=getGraded(rec.id);
-  const restore = (already && g && g.lastSig===sig && g.detail && g.detail.type==='kw') ? g.detail.checked : null;
+  const restore = (already && g && g.ver===SCORING_VER && g.lastSig===sig && g.detail && g.detail.type==='kw') ? g.detail.checked : null;
   kwList.innerHTML = keywords.map((kw,i)=>`
     <div class="kw-item locked${restore && restore.indexOf(i)>=0?' checked':''}" id="kwItem${i}" onclick="toggleKwItem(${i})">
       <span class="kw-cb"></span>
@@ -3421,6 +3424,7 @@ function applyStageLogic(total, sig, detail, rateText){
 
   // 채점 기록
   const g=getGraded(rec.id)||{sigs:[]};
+  if(g.ver!==SCORING_VER){ g.sigs=[]; g.ver=SCORING_VER; }   // 기준이 바뀌었으면 옛 답안 지문은 버린다
   g.sigs=(g.sigs||[]).concat(sig?[sig]:[]).slice(-60);
   g.lastSig=sig||null; g.score=total; g.rate=rateText||(total+'%'); g.at=Date.now(); g.mode=currentMode; g.detail=detail||null;
   if(newStage==='CLEAR' && curStage!=='CLEAR') g.clearedAt=Date.now();
@@ -3798,7 +3802,7 @@ function openGridCheck(sig, already){
   const ans=_answerParts(g.rows);
   const prev=getGraded(rec.id);
   // 같은 답안을 다시 제출한 경우: 지난번에 고른 밴드·계수를 그대로 보여 주고 잠근다
-  const restore=(already && prev && prev.lastSig===sig && prev.detail && prev.detail.type==='grid' && prev.detail.sel && prev.detail.sel.length===g.rows.length) ? prev.detail.sel : null;
+  const restore=(already && prev && prev.ver===SCORING_VER && prev.lastSig===sig && prev.detail && prev.detail.type==='grid' && prev.detail.sel && prev.detail.sel.length===g.rows.length) ? prev.detail.sel : null;
   gridState={rows:g.rows, sel:[], submitted:!!already, must:g.must, sig:sig||null, forbidHits:[]};
   g.rows.forEach(function(r,i){
     const s=_suggest(r,ans);
